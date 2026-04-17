@@ -2957,8 +2957,26 @@ async function openHistorique(actionId) {
   const reals = await loadRealisations();
   const users = await loadUsers();
   const a = actions.find(x => x.id === actionId);
+  const today = new Date().toISOString().split('T')[0];
   const hist = reals.filter(r => r.action_id === actionId)
     .sort((a,b) => (b.date_prevue||'').localeCompare(a.date_prevue||''));
+
+  const realisees = hist.filter(r => r.date_reelle);
+  const planifiees = hist.filter(r => !r.date_reelle);
+
+  function renderRows(rows) {
+    return rows.map(r => {
+      const eCls = r.etat==='Réalisé dans les délais'?'b-clos':r.etat==='En retard'||r.etat==='Réalisé en retard'?'b-ouvert':'b-encours';
+      return `<tr>
+        <td>${fmtDate(r.date_prevue)}</td>
+        <td>${r.date_reelle ? fmtDate(r.date_reelle) : '<span style="color:var(--gris)">—</span>'}</td>
+        <td><span class="badge ${eCls}" style="font-size:11px">${r.etat||'—'}</span></td>
+        <td style="font-size:12px">${getUserName(users, r.realise_par)}</td>
+        <td style="font-size:12px;max-width:180px">${r.commentaire||'—'}</td>
+        <td><button class="btn btn-secondary btn-xs" title="Modifier" onclick="closeHistModal();openRealForm('${actionId}','${r.id}')">✏️</button></td>
+      </tr>`;
+    }).join('');
+  }
 
   document.getElementById('modalHistContent').innerHTML = `
     <div class="modal-head">
@@ -2966,24 +2984,22 @@ async function openHistorique(actionId) {
       <button class="modal-close" onclick="closeHistModal()">✕</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:12.5px;color:var(--gris);margin-bottom:14px;">${a?.processus} · ${a?.frequence} · ${a?.site}</p>
-          ${hist.length ? `
+      <p style="font-size:12.5px;color:var(--gris);margin-bottom:16px;">${a?.processus} · ${a?.frequence} · ${a?.site}</p>
+
+      ${planifiees.length ? `
+      <p style="font-size:12px;font-weight:500;color:var(--gris-mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">Occurrences à venir</p>
+      <div class="table-wrap" style="margin-bottom:20px;"><table>
+        <thead><tr><th>Date prévue</th><th>Date réelle</th><th>État</th><th>Réalisé par</th><th>Commentaire</th><th></th></tr></thead>
+        <tbody>${renderRows(planifiees)}</tbody>
+      </table></div>` : ''}
+
+      <p style="font-size:12px;font-weight:500;color:var(--gris-mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">Réalisations passées</p>
+      ${realisees.length ? `
       <div class="table-wrap"><table>
         <thead><tr><th>Date prévue</th><th>Date réelle</th><th>État</th><th>Réalisé par</th><th>Commentaire</th><th></th></tr></thead>
-        <tbody>
-          ${hist.map(r => {
-            const eCls = r.etat==='Réalisé dans les délais'?'b-clos':r.etat==='En retard'||r.etat==='Réalisé en retard'?'b-ouvert':'b-encours';
-            return `<tr>
-              <td>${fmtDate(r.date_prevue)}</td>
-              <td>${r.date_reelle ? fmtDate(r.date_reelle) : '<span style="color:var(--gris)">—</span>'}</td>
-              <td><span class="badge ${eCls}" style="font-size:11px">${r.etat||'—'}</span></td>
-              <td style="font-size:12px">${getUserName(users, r.realise_par)}</td>
-              <td style="font-size:12px;max-width:200px">${r.commentaire||'—'}</td>
-              <td><button class="btn btn-secondary btn-xs" onclick="closeHistModal();openRealForm('${actionId}','${r.id}')">✏️</button></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table></div>` : '<p style="color:var(--gris);text-align:center;padding:20px">Aucune réalisation enregistrée</p>'}
+        <tbody>${renderRows(realisees)}</tbody>
+      </table></div>` : `<p style="color:var(--gris);text-align:center;padding:16px;font-size:13px;">Aucune réalisation enregistrée pour le moment.</p>`}
+
       <div style="text-align:right;margin-top:16px;padding-top:12px;border-top:1px solid var(--gris-light);">
         <button class="btn btn-secondary btn-sm" onclick="closeHistModal()">Fermer</button>
       </div>
