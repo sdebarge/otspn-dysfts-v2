@@ -1086,7 +1086,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
 
     <!-- Vue Par processus -->
     <div id="view-parprocessus" style="display:none;">
-      <div class="filter-row">
+      <div class="filter-row" style="flex-wrap:wrap;gap:10px;align-items:center;">
         <select id="filterProcessusActions" class="form-select" onchange="renderParProcessus()" style="min-width:220px;">
           <option value="">Tous les processus</option>
           <option>Accueil &amp; boutiques</option>
@@ -1099,6 +1099,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
           <option>Ressources humaines</option>
           <option>Stratégie</option>
           <option>Visites &amp; excursions</option>
+          <option>Valorisation des supports</option>
         </select>
         <select id="filterEtatActions" class="form-select" onchange="renderParProcessus()">
           <option value="">Tous les états</option>
@@ -1107,6 +1108,13 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
           <option>Réalisé en retard</option>
           <option>En retard</option>
           <option>À planifier</option>
+        </select>
+        <select id="filterAnneeActions" class="form-select" onchange="renderParProcessus()" style="min-width:100px;">
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
         </select>
       </div>
       <div id="actionsParProcessusContainer"></div>
@@ -1323,6 +1331,7 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
 
 <div class="version-tag">Sarlat Périgord Noir Tourisme · ISO 9001 §10.2 · §8.5</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 // ══════════════════════════════════════════════
 // DONNÉES & CONSTANTES
@@ -2558,14 +2567,18 @@ async function renderActionsEcheances() {
 }
 
 // ── Vue Par processus ──
+const _charts = {}; // stocker les instances Chart.js pour détruire avant recréer
+
 async function renderParProcessus() {
   const actions = await loadActions();
   const reals = await loadRealisations();
   const users = await loadUsers();
   const filterProc = document.getElementById('filterProcessusActions')?.value || '';
   const filterEtat = document.getElementById('filterEtatActions')?.value || '';
+  const annee = parseInt(document.getElementById('filterAnneeActions')?.value || new Date().getFullYear());
   const today = new Date().toISOString().split('T')[0];
 
+  // Filtrer actions actives
   let filtered = actions.filter(a => a.actif);
   if (filterProc) filtered = filtered.filter(a => a.processus === filterProc);
 
@@ -2573,43 +2586,211 @@ async function renderParProcessus() {
   const byProc = {};
   filtered.forEach(a => {
     if (!byProc[a.processus]) byProc[a.processus] = [];
-    const next = getNextReal(reals, a.id) || getOverdueReal(reals, a.id);
-    const etat = next ? (next.date_prevue < today ? 'En retard' : 'Planifié') : 'À planifier';
-    if (filterEtat && etat !== filterEtat) return;
-    byProc[a.processus].push({ a, next, etat });
+    byProc[a.processus].push(a);
   });
 
   const container = document.getElementById('actionsParProcessusContainer');
+
+  // Détruire les anciens graphiques
+  Object.values(_charts).forEach(c => c.destroy());
+  Object.keys(_charts).forEach(k => delete _charts[k]);
+
   container.innerHTML = Object.keys(byProc).sort().map(proc => {
-    const items = byProc[proc];
-    if (!items.length) return '';
-    return `<div class="card" style="margin-bottom:16px;">
-      <div class="card-title" style="margin-bottom:14px;">
+    const procActions = byProc[proc];
+    const safeId = proc.replace(/[^a-zA-Z0-9]/g, '_');
+
+    // Calcul stats par trimestre pour l'année sélectionnée
+    const trimestres = [
+      { label: 'T1', start: `${annee}-01-01`, end: `${annee}-03-31` },
+      { label: 'T2', start: `${annee}-04-01`, end: `${annee}-06-30` },
+      { label: 'T3', start: `${annee}-07-01`, end: `${annee}-09-30` },
+      { label: 'T4', start: `${annee}-10-01`, end: `${annee}-12-31` },
+    ];
+
+    const stats = trimestres.map(t => {
+      // Occurrences dont la date prévue tombe dans ce trimestre
+      const occurrences = [];
+      procActions.forEach(a => {
+        reals.filter(r => r.action_id === a.id && r.date_prevue >= t.start && r.date_prevue <= t.end)
+          .forEach(r => occurrences.push(r));
+      });
+
+      const planifie = occurrences.filter(r => !r.date_reelle && r.date_prevue >= today).length;
+      const dansDelais = occurrences.filter(r => r.etat === 'Réalisé dans les délais').length;
+      const enRetard = occurrences.filter(r => r.etat === 'Réalisé en retard').length;
+      const nonRealise = occurrences.filter(r => !r.date_reelle && r.date_prevue < today).length;
+      const total = occurrences.length;
+
+      return { label: t.label, planifie, dansDelais, enRetard, nonRealise, total };
+    });
+
+    // Liste des actions avec état filtré
+    const items = [];
+    procActions.forEach(a => {
+      const next = getNextReal(reals, a.id) || getOverdueReal(reals, a.id);
+      const etat = next ? (next.date_prevue < today ? 'En retard' : 'Planifié') : 'À planifier';
+      if (filterEtat && etat !== filterEtat) return;
+      items.push({ a, next, etat });
+    });
+
+    const totalAnnee = stats.reduce((s, t) => s + t.total, 0);
+    const totalDansDelais = stats.reduce((s, t) => s + t.dansDelais, 0);
+    const totalEnRetard = stats.reduce((s, t) => s + t.enRetard, 0);
+    const totalNonRealise = stats.reduce((s, t) => s + t.nonRealise, 0);
+    const totalPlanifie = stats.reduce((s, t) => s + t.planifie, 0);
+
+    return `<div class="card" style="margin-bottom:20px;">
+      <div class="card-title" style="margin-bottom:16px;">
         <div class="card-title-icon">🗂</div>${proc}
-        <span style="font-size:12px;color:var(--gris);margin-left:8px;">${items.length} action${items.length>1?'s':''}</span>
+        <span style="font-size:12px;color:var(--gris);margin-left:8px;">${procActions.length} action${procActions.length>1?'s':''}</span>
+        <span style="margin-left:auto;font-size:12px;font-weight:400;color:var(--gris);">Année ${annee}</span>
       </div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Action</th><th>Fréquence</th><th>Responsable</th><th>Prochaine</th><th>État</th><th>Actions</th></tr></thead>
-        <tbody>
-          ${items.map(({a, next, etat}) => {
-            const eCls = etat==='En retard'?'b-grave':etat==='Planifié'?'b-encours':'b-mineur';
-            return `<tr>
-              <td>${a.action}</td>
-              <td style="font-size:12px">${a.frequence}</td>
-              <td style="font-size:12px">${getUserName(users, a.responsable_id)}</td>
-              <td style="font-size:12px">${next ? fmtDate(next.date_prevue) : '—'}</td>
-              <td><span class="badge ${eCls}">${etat}</span></td>
-              <td><div style="display:flex;gap:5px;">
-                ${next?`<button class="btn btn-primary btn-xs" onclick="openRealForm('${a.id}','${next.id}')">✅</button>`:''}
-                <button class="btn btn-secondary btn-xs" onclick="openActionForm('${a.id}')">✏️</button>
-                <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
-              </div></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table></div>
+
+      <!-- Graphique + Tableau côte à côte -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+
+        <!-- Graphique -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;font-weight:500;color:var(--gris-mid);text-transform:uppercase;letter-spacing:0.05em;">Suivi trimestriel</span>
+            <button class="btn btn-secondary btn-xs" onclick="copyChart('canvas_${safeId}')" title="Copier le graphique">📋 Copier</button>
+          </div>
+          <canvas id="canvas_${safeId}" height="180"></canvas>
+        </div>
+
+        <!-- Tableau récapitulatif -->
+        <div>
+          <p style="font-size:12px;font-weight:500;color:var(--gris-mid);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Tableau de bord ${annee}</p>
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:var(--vert-fonce);color:white;">
+                <th style="padding:6px 8px;text-align:left;border-radius:4px 0 0 0;">Trimestre</th>
+                <th style="padding:6px 8px;text-align:center;">✅ Délais</th>
+                <th style="padding:6px 8px;text-align:center;">⚠️ Retard</th>
+                <th style="padding:6px 8px;text-align:center;">🔴 Non fait</th>
+                <th style="padding:6px 8px;text-align:center;border-radius:0 4px 0 0;">📅 Planifié</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${stats.map((s, i) => `
+              <tr style="background:${i%2===0?'white':'var(--vert-tres-pale)'}">
+                <td style="padding:6px 8px;font-weight:500;border-bottom:1px solid var(--gris-light);">${s.label}</td>
+                <td style="padding:6px 8px;text-align:center;color:#1B6B4A;font-weight:500;border-bottom:1px solid var(--gris-light);">${s.dansDelais||'—'}</td>
+                <td style="padding:6px 8px;text-align:center;color:#D4762A;font-weight:500;border-bottom:1px solid var(--gris-light);">${s.enRetard||'—'}</td>
+                <td style="padding:6px 8px;text-align:center;color:#C0392B;font-weight:500;border-bottom:1px solid var(--gris-light);">${s.nonRealise||'—'}</td>
+                <td style="padding:6px 8px;text-align:center;color:#2A5080;font-weight:500;border-bottom:1px solid var(--gris-light);">${s.planifie||'—'}</td>
+              </tr>`).join('')}
+              <tr style="background:var(--gris-light);font-weight:600;">
+                <td style="padding:6px 8px;">Total</td>
+                <td style="padding:6px 8px;text-align:center;color:#1B6B4A;">${totalDansDelais||'—'}</td>
+                <td style="padding:6px 8px;text-align:center;color:#D4762A;">${totalEnRetard||'—'}</td>
+                <td style="padding:6px 8px;text-align:center;color:#C0392B;">${totalNonRealise||'—'}</td>
+                <td style="padding:6px 8px;text-align:center;color:#2A5080;">${totalPlanifie||'—'}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Liste des actions -->
+      ${items.length ? `
+      <details>
+        <summary style="font-size:13px;font-weight:500;cursor:pointer;color:var(--gris-mid);padding:8px 0;border-top:1px solid var(--gris-light);">
+          Voir les ${items.length} action${items.length>1?'s':''} du processus
+        </summary>
+        <div class="table-wrap" style="margin-top:10px;"><table>
+          <thead><tr><th>Action</th><th>Fréquence</th><th>Responsable</th><th>Prochaine</th><th>État</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${items.map(({a, next, etat}) => {
+              const eCls = etat==='En retard'?'b-grave':etat==='Planifié'?'b-encours':'b-mineur';
+              return `<tr>
+                <td>${a.action}</td>
+                <td style="font-size:12px">${a.frequence}</td>
+                <td style="font-size:12px">${getUserName(users, a.responsable_id)}</td>
+                <td style="font-size:12px">${next ? fmtDate(next.date_prevue) : '—'}</td>
+                <td><span class="badge ${eCls}">${etat}</span></td>
+                <td><div style="display:flex;gap:5px;">
+                  ${next?`<button class="btn btn-primary btn-xs" onclick="openRealForm('${a.id}','${next.id}')">📅</button>`:''}
+                  <button class="btn btn-secondary btn-xs" onclick="openActionForm('${a.id}')">✏️</button>
+                  <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
+                </div></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table></div>
+      </details>` : `<p style="font-size:13px;color:var(--gris);padding:8px 0;border-top:1px solid var(--gris-light);">Aucune action pour cet état.</p>`}
     </div>`;
   }).join('');
+
+  // Créer les graphiques Chart.js après rendu HTML
+  Object.keys(byProc).sort().forEach(proc => {
+    const safeId = proc.replace(/[^a-zA-Z0-9]/g, '_');
+    const canvas = document.getElementById(`canvas_${safeId}`);
+    if (!canvas) return;
+
+    const trimestres = [
+      { label: 'T1', start: `${annee}-01-01`, end: `${annee}-03-31` },
+      { label: 'T2', start: `${annee}-04-01`, end: `${annee}-06-30` },
+      { label: 'T3', start: `${annee}-07-01`, end: `${annee}-09-30` },
+      { label: 'T4', start: `${annee}-10-01`, end: `${annee}-12-31` },
+    ];
+
+    const procActions = byProc[proc];
+    const stats = trimestres.map(t => {
+      const occurrences = [];
+      procActions.forEach(a => {
+        reals.filter(r => r.action_id === a.id && r.date_prevue >= t.start && r.date_prevue <= t.end)
+          .forEach(r => occurrences.push(r));
+      });
+      return {
+        dansDelais: occurrences.filter(r => r.etat === 'Réalisé dans les délais').length,
+        enRetard: occurrences.filter(r => r.etat === 'Réalisé en retard').length,
+        nonRealise: occurrences.filter(r => !r.date_reelle && r.date_prevue < today).length,
+        planifie: occurrences.filter(r => !r.date_reelle && r.date_prevue >= today).length,
+      };
+    });
+
+    _charts[safeId] = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: ['T1', 'T2', 'T3', 'T4'],
+        datasets: [
+          { label: 'Réalisé dans les délais', data: stats.map(s => s.dansDelais), backgroundColor: '#1B6B4A', borderRadius: 3 },
+          { label: 'Réalisé en retard', data: stats.map(s => s.enRetard), backgroundColor: '#D4762A', borderRadius: 3 },
+          { label: 'Non réalisé', data: stats.map(s => s.nonRealise), backgroundColor: '#C0392B', borderRadius: 3 },
+          { label: 'Planifié', data: stats.map(s => s.planifie), backgroundColor: '#B5D4F4', borderRadius: 3 },
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } },
+          title: { display: false }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.05)' } }
+        }
+      }
+    });
+  });
+}
+
+async function copyChart(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  try {
+    canvas.toBlob(async blob => {
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      showToast('Graphique copié — collez-le dans votre présentation', 'success');
+    });
+  } catch(e) {
+    // Fallback : ouvrir dans un nouvel onglet
+    const url = canvas.toDataURL('image/png');
+    const win = window.open();
+    win.document.write(`<img src="${url}" style="max-width:100%"><br><small>Clic droit → Copier l'image</small>`);
+    showToast('Graphique ouvert dans un nouvel onglet — clic droit pour copier', 'success');
+  }
 }
 
 // ── Vue Toutes les actions ──
