@@ -1308,6 +1308,11 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
   </div>
 </div>
 
+<!-- ── MODAL HISTORIQUE ── -->
+<div class="modal-bg" id="modalHistBg" onclick="if(event.target===this)closeHistModal()">
+  <div class="modal" id="modalHistContent" style="max-width:780px;"></div>
+</div>
+
 <!-- ── MODAL DÉTAIL DYSFONCTIONNEMENTS ── -->
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
   <div class="modal" id="modalContent"></div>
