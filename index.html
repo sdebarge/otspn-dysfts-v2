@@ -1,0 +1,2923 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dysfonctionnements — Office de Tourisme Sarlat Périgord Noir</title>
+<!-- VERSION PRODUCTION — JSONBin.io -->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --vert-fonce:   #1B6B4A;
+  --vert-mid:     #2A8A61;
+  --vert-light:   #4CAF82;
+  --vert-pale:    #E8F5EE;
+  --vert-tres-pale:#F2FAF6;
+  --gris-fonce:   #1A2B22;
+  --gris-mid:     #4A6358;
+  --gris:         #8AA898;
+  --gris-light:   #DDE8E2;
+  --creme:        #F6FAF8;
+  --blanc:        #FFFFFF;
+  --rouge:        #C0392B;
+  --rouge-pale:   #FAEAEA;
+  --orange:       #D4762A;
+  --orange-pale:  #FEF3E8;
+  --bleu:         #2A5080;
+  --bleu-pale:    #EAF0F8;
+  /* Alias pour compatibilité */
+  --brun:         var(--gris-fonce);
+  --brun-mid:     var(--gris-mid);
+  --brun-light:   var(--gris);
+  --or:           var(--vert-fonce);
+  --or-light:     var(--vert-light);
+  --or-pale:      var(--vert-pale);
+  --vert:         var(--vert-fonce);
+  --r: 12px;
+  --r-sm: 7px;
+  --sh: 0 2px 16px rgba(27,107,74,0.10);
+  --sh-lg: 0 8px 40px rgba(27,107,74,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--creme);
+  color: var(--gris-fonce);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── ÉCRAN DE CONNEXION ── */
+#loginScreen {
+  position: fixed; inset: 0;
+  background: var(--vert-fonce);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+.login-box {
+  background: var(--blanc);
+  border-radius: 20px;
+  padding: 48px 44px;
+  width: 100%; max-width: 420px;
+  box-shadow: var(--sh-lg);
+  text-align: center;
+}
+.login-logo {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--gris-mid);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.login-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 26px;
+  color: var(--gris-fonce);
+  margin-bottom: 6px;
+}
+.login-sub {
+  font-size: 13px;
+  color: var(--gris);
+  margin-bottom: 32px;
+}
+.login-roles {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.role-btn {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  border: 1.5px solid var(--gris-light);
+  border-radius: var(--r-sm);
+  background: var(--creme);
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: left;
+  width: 100%;
+}
+.role-btn:hover { border-color: var(--or); background: var(--or-pale); }
+.role-btn.selected { border-color: var(--or); background: var(--or-pale); box-shadow: 0 0 0 3px rgba(196,146,58,0.18); }
+.role-icon {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.role-name { font-size: 13.5px; font-weight: 500; color: var(--brun); }
+.role-desc { font-size: 11.5px; color: var(--gris); margin-top: 1px; }
+.login-pin {
+  margin-bottom: 16px;
+}
+.login-pin input {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--gris-light);
+  border-radius: var(--r-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; letter-spacing: 0.15em;
+  text-align: center;
+  outline: none;
+  background: var(--blanc);
+  color: var(--brun);
+  transition: border-color 0.18s;
+}
+.login-pin input:focus { border-color: var(--or); }
+.login-pin-label { font-size: 12px; color: var(--gris); margin-bottom: 8px; }
+.btn-login {
+  width: 100%; padding: 13px;
+  background: var(--vert-fonce);
+  color: var(--blanc);
+  border: none; border-radius: var(--r-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.btn-login:hover { background: var(--vert-mid); }
+.login-error { font-size: 12px; color: var(--rouge); margin-top: 10px; display: none; }
+.login-test-note {
+  margin-top: 20px; padding: 10px 14px;
+  background: var(--vert-pale);
+  border-radius: var(--r-sm);
+  font-size: 11.5px; color: var(--gris-mid);
+  text-align: left;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--vert-fonce);
+  height: 60px;
+  display: flex; align-items: center;
+  padding: 0 28px;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.header-brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.header-emblem {
+  width: 34px; height: 34px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.header-name {
+  font-family: 'Source Serif 4', serif;
+  font-size: 16px; color: var(--blanc);
+}
+.header-sub {
+  font-size: 10.5px; color: rgba(255,255,255,0.7);
+  letter-spacing: 0.09em; text-transform: uppercase;
+}
+.header-right {
+  display: flex; align-items: center; gap: 14px;
+}
+.header-role {
+  font-size: 11.5px; color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.15);
+  padding: 4px 12px; border-radius: 20px;
+}
+.btn-logout {
+  background: rgba(255,255,255,0.15);
+  border: none; color: var(--blanc);
+  padding: 6px 14px; border-radius: var(--r-sm);
+  font-size: 12px; cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.18s;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.25); }
+
+/* ── NAVIGATION ── */
+.nav {
+  background: var(--blanc);
+  border-bottom: 1px solid var(--gris-light);
+  padding: 0 28px;
+  display: flex; gap: 0;
+}
+.nav-btn {
+  padding: 14px 20px;
+  background: none; border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; color: var(--gris);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  transition: all 0.18s;
+  display: flex; align-items: center; gap: 7px;
+}
+.nav-btn:hover { color: var(--brun); }
+.nav-btn.active { color: var(--gris-fonce); border-bottom-color: var(--vert-fonce); font-weight: 500; }
+
+/* ── LAYOUT ── */
+.app { display: none; }
+.app.visible { display: block; }
+.page { display: none; padding: 28px; max-width: 1320px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* ── ALERTES ── */
+.alert-bar {
+  background: var(--rouge-pale);
+  border: 1px solid rgba(184,50,50,0.25);
+  border-radius: var(--r);
+  padding: 12px 18px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  font-size: 13px; color: var(--rouge);
+}
+.alert-bar-icon { font-size: 16px; flex-shrink: 0; }
+.alert-bar strong { font-weight: 500; }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--blanc);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  box-shadow: var(--sh);
+  border-left: 3px solid var(--or);
+}
+.stat-card.rouge { border-left-color: var(--rouge); }
+.stat-card.vert  { border-left-color: var(--vert);  }
+.stat-card.bleu  { border-left-color: var(--bleu);  }
+.stat-card.orange{ border-left-color: var(--orange); }
+.stat-num {
+  font-family: 'Source Serif 4', serif;
+  font-size: 30px; font-weight: 600;
+  line-height: 1; margin-bottom: 3px;
+}
+.stat-label { font-size: 12px; color: var(--gris); }
+.stat-sub { font-size: 11px; color: var(--gris); margin-top: 4px; }
+
+/* ── CARD ── */
+.card {
+  background: var(--blanc);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.card-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 18px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+}
+.card-title-icon {
+  width: 30px; height: 30px;
+  background: var(--or-pale);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+
+/* ── FILTRES ── */
+.filter-row {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 16px; align-items: center;
+}
+.filter-row input,
+.filter-row select {
+  padding: 8px 12px;
+  border: 1.5px solid var(--gris-light);
+  border-radius: var(--r-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; color: var(--brun);
+  background: var(--creme);
+  outline: none;
+  transition: border-color 0.18s;
+}
+.filter-row input { flex: 1; min-width: 180px; }
+.filter-row select { min-width: 150px; }
+.filter-row input:focus,
+.filter-row select:focus { border-color: var(--or); background: var(--blanc); }
+
+/* ── TABLEAU ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: var(--or-pale); }
+th {
+  text-align: left; padding: 10px 14px;
+  font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--brun-mid);
+  border-bottom: 1.5px solid var(--or-light);
+  white-space: nowrap; cursor: pointer; user-select: none;
+}
+th:hover { color: var(--or); }
+td {
+  padding: 11px 14px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--gris-light);
+  vertical-align: middle;
+}
+tr:hover td { background: var(--or-pale); }
+tr:last-child td { border-bottom: none; }
+.td-desc {
+  max-width: 220px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.td-num {
+  font-family: 'Spectral', serif;
+  font-weight: 600; color: var(--or);
+  font-size: 13px;
+}
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 500; white-space: nowrap;
+}
+.b-grave    { background: var(--rouge-pale);  color: var(--rouge);  }
+.b-modere   { background: var(--orange-pale); color: var(--orange); }
+.b-mineur   { background: var(--bleu-pale);   color: var(--bleu);   }
+.b-ouvert   { background: var(--rouge-pale);  color: var(--rouge);  }
+.b-encours  { background: var(--orange-pale); color: var(--orange); }
+.b-clos     { background: var(--vert-pale);   color: var(--vert);   }
+.b-oui      { background: var(--rouge-pale);  color: var(--rouge);  }
+.b-non      { background: var(--vert-pale);   color: var(--vert);   }
+
+/* ── BOUTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border: none; border-radius: var(--r-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.18s; white-space: nowrap;
+}
+.btn-primary { background: var(--vert-fonce); color: var(--blanc); }
+.btn-primary:hover { background: var(--vert-mid); }
+.btn-gold { background: var(--vert-fonce); color: var(--blanc); }
+.btn-gold:hover { background: var(--vert-mid); }
+.btn-secondary { background: var(--gris-light); color: var(--brun); }
+.btn-secondary:hover { background: var(--gris-light); opacity: 0.75; }
+.btn-danger { background: var(--rouge-pale); color: var(--rouge); }
+.btn-danger:hover { background: var(--rouge); color: var(--blanc); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-xs { padding: 4px 9px; font-size: 11.5px; }
+
+/* ── FORMULAIRE ── */
+.form-section-title {
+  font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--or); padding-bottom: 10px;
+  border-bottom: 1px solid var(--gris-light);
+  margin-bottom: 16px; margin-top: 24px;
+}
+.form-section-title:first-child { margin-top: 0; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label {
+  font-size: 12.5px; font-weight: 500; color: var(--brun-mid);
+}
+.required::after { content: ' *'; color: var(--rouge); }
+.form-input, .form-select, .form-textarea {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; padding: 10px 13px;
+  border: 1.5px solid var(--gris-light);
+  border-radius: var(--r-sm);
+  background: var(--creme); color: var(--brun);
+  outline: none; transition: all 0.18s;
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--or);
+  box-shadow: 0 0 0 3px rgba(196,146,58,0.13);
+  background: var(--blanc);
+}
+.form-input.error, .form-select.error, .form-textarea.error {
+  border-color: var(--rouge);
+  box-shadow: 0 0 0 3px rgba(184,50,50,0.10);
+}
+.form-textarea { resize: vertical; min-height: 82px; }
+.form-hint { font-size: 11.5px; color: var(--gris); margin-top: 2px; }
+.form-error { font-size: 11.5px; color: var(--rouge); margin-top: 2px; display: none; }
+
+/* Checkboxes causes */
+.causes-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.cause-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--gris-light);
+  border-radius: var(--r-sm);
+  cursor: pointer; transition: all 0.18s;
+  background: var(--creme);
+}
+.cause-item:hover { border-color: var(--or); background: var(--or-pale); }
+.cause-item.selected { border-color: var(--or); background: var(--or-pale); }
+.cause-item input { display: none; }
+.cause-label { font-size: 13px; color: var(--brun); }
+.cause-dot {
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 1.5px solid var(--gris);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.18s;
+}
+.cause-item.selected .cause-dot {
+  background: var(--or); border-color: var(--or);
+}
+.cause-item.selected .cause-dot::after {
+  content: '✓'; font-size: 10px; color: white;
+}
+
+/* Conditional fields */
+.conditional { display: none; }
+.conditional.visible { display: block; }
+
+/* Résolution immédiate toggle */
+.toggle-row {
+  display: flex; align-items: center; gap: 12px;
+}
+.toggle {
+  position: relative; width: 42px; height: 24px;
+  flex-shrink: 0;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0;
+  background: var(--gris-light); border-radius: 24px;
+  cursor: pointer; transition: background 0.2s;
+}
+.toggle-slider::before {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: white; top: 3px; left: 3px;
+  transition: transform 0.2s;
+}
+input:checked + .toggle-slider { background: var(--vert); }
+input:checked + .toggle-slider::before { transform: translateX(18px); }
+.toggle-label { font-size: 13.5px; color: var(--brun); }
+
+/* Pilote-only block */
+.pilote-section {
+  background: var(--or-pale);
+  border: 1px solid rgba(196,146,58,0.3);
+  border-radius: var(--r);
+  padding: 20px;
+  margin-top: 8px;
+}
+.pilote-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--vert-fonce); color: var(--blanc);
+  font-size: 11px; font-weight: 500;
+  padding: 3px 10px; border-radius: 20px;
+  margin-bottom: 14px;
+}
+.readonly-block {
+  background: var(--gris-light);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  font-size: 13px; color: var(--gris);
+  font-style: italic;
+}
+
+/* Teams rappel */
+.teams-reminder {
+  background: var(--bleu-pale);
+  border: 1px solid rgba(42,80,128,0.2);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  font-size: 12.5px; color: var(--bleu);
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Form actions */
+.form-actions {
+  display: flex; gap: 10px; justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid var(--gris-light);
+  margin-top: 20px;
+}
+
+/* ── MODAL ── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(44,31,20,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--blanc);
+  border-radius: 16px;
+  box-shadow: var(--sh-lg);
+  width: 100%; max-width: 760px;
+  max-height: 88vh; overflow-y: auto;
+  animation: slideUp 0.22s ease;
+}
+.modal-head {
+  background: var(--vert-fonce);
+  color: var(--blanc);
+  padding: 18px 26px;
+  border-radius: 16px 16px 0 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-head h3 { font-family: 'Source Serif 4', serif; font-size: 17px; }
+.modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: none; color: var(--blanc);
+  font-size: 17px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.18s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.3); }
+.modal-body { padding: 26px; }
+.detail-section { margin-bottom: 20px; }
+.detail-section-title {
+  font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--or); margin-bottom: 10px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--gris-light);
+}
+.detail-row {
+  display: flex; gap: 8px;
+  margin-bottom: 7px; font-size: 13px;
+}
+.detail-lbl { color: var(--gris); min-width: 180px; flex-shrink: 0; }
+.detail-val { color: var(--brun); font-weight: 400; }
+.modal-actions {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid var(--gris-light);
+  margin-top: 8px;
+}
+
+/* ── ANALYSE ── */
+.analyse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.chart-bar-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px;
+}
+.chart-bar-label { min-width: 170px; font-size: 12.5px; color: var(--brun-mid); }
+.chart-bar-track {
+  flex: 1; height: 7px; background: var(--gris-light);
+  border-radius: 4px; overflow: hidden;
+}
+.chart-bar-fill { height: 100%; border-radius: 4px; background: var(--or); transition: width 0.5s; }
+.chart-bar-fill.rouge { background: var(--rouge); }
+.chart-bar-fill.vert  { background: var(--vert);  }
+.chart-bar-fill.bleu  { background: var(--bleu);  }
+.chart-bar-fill.orange{ background: var(--orange); }
+.chart-bar-count { min-width: 22px; font-size: 12.5px; font-weight: 500; text-align: right; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 22px; right: 22px;
+  background: var(--vert-fonce); color: var(--blanc);
+  padding: 13px 18px; border-radius: var(--r);
+  font-size: 13.5px; font-weight: 500;
+  box-shadow: var(--sh-lg); z-index: 9999;
+  display: flex; align-items: center; gap: 9px;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+  max-width: 360px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-left: 4px solid #4CAF82; }
+.toast.error   { border-left: 4px solid var(--rouge); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 52px 20px;
+  color: var(--gris);
+}
+.empty-state-icon { font-size: 40px; margin-bottom: 14px; }
+.empty-state h3 {
+  font-family: 'Spectral', serif;
+  font-size: 19px; color: var(--brun-mid); margin-bottom: 6px;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@media (max-width: 680px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .analyse-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .page { padding: 16px; }
+  .header { padding: 0 16px; }
+  .nav { padding: 0 12px; }
+  .nav-btn { padding: 12px 10px; font-size: 12px; }
+}
+
+@keyframes loadPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.sort-asc::after  { content: ' ↑'; color: var(--or); }
+.sort-desc::after { content: ' ↓'; color: var(--or); }
+
+.version-tag {
+  font-size: 10px; color: var(--gris); text-align: center;
+  padding: 16px; opacity: 0.6;
+}
+
+/* ── TABS MODULE 2 ── */
+.tabs {
+  display: flex; gap: 4px;
+  background: var(--gris-light);
+  border-radius: var(--r-sm);
+  padding: 4px;
+}
+.tab {
+  background: none; border: none;
+  padding: 7px 16px; border-radius: 5px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; cursor: pointer;
+  color: var(--gris-mid);
+  transition: all 0.18s;
+}
+.tab:hover { background: rgba(255,255,255,0.7); color: var(--gris-fonce); }
+.tab.active { background: var(--blanc); color: var(--gris-fonce); font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+.form-hint { font-size: 11.5px; color: var(--gris); margin-top: 4px; display: block; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ ÉCRAN CONNEXION ══════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Sarlat · Périgord Noir · Tourisme</div>
+    <div class="login-title">Dysfonctionnements</div>
+    <div class="login-sub">Registre qualité ISO 9001 · §10.2</div>
+
+    <!-- Formulaire de connexion normal -->
+    <div id="loginForm">
+      <div style="display:grid;gap:12px;margin-bottom:16px;">
+        <div class="form-group">
+          <label class="form-label">Adresse email</label>
+          <input class="form-input" type="email" id="loginEmail"
+                 placeholder="prenom.nom@sarlat-tourisme.com"
+                 onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mot de passe</label>
+          <input class="form-input" type="password" id="loginPassword"
+                 placeholder="••••••••"
+                 onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+      </div>
+      <button class="btn-login" onclick="doLogin()" id="btnLogin">Se connecter</button>
+      <div class="login-error" id="loginError" style="display:none;">Email ou mot de passe incorrect.</div>
+      <div style="text-align:center;margin-top:14px;">
+        <button onclick="doResetPassword()" style="background:none;border:none;color:var(--gris-mid);font-size:12.5px;cursor:pointer;text-decoration:underline;font-family:inherit;">
+          Mot de passe oublié ?
+        </button>
+      </div>
+      <div id="resetMsg" style="display:none;margin-top:12px;padding:10px 14px;background:var(--vert-pale);border-radius:var(--r-sm);font-size:12.5px;color:var(--vert-fonce);">
+        Un email de réinitialisation a été envoyé.
+      </div>
+    </div>
+
+    <!-- Formulaire de définition du nouveau mot de passe (après clic sur le lien email) -->
+    <div id="newPasswordForm" style="display:none;">
+      <div style="margin-bottom:16px;padding:10px 14px;background:var(--vert-pale);border-radius:var(--r-sm);font-size:13px;color:var(--vert-fonce);">
+        Choisissez votre nouveau mot de passe.
+      </div>
+      <div style="display:grid;gap:12px;margin-bottom:16px;">
+        <div class="form-group">
+          <label class="form-label">Nouveau mot de passe</label>
+          <input class="form-input" type="password" id="newPassword"
+                 placeholder="••••••••" minlength="8"
+                 onkeydown="if(event.key==='Enter')doSetNewPassword()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmer le mot de passe</label>
+          <input class="form-input" type="password" id="confirmPassword"
+                 placeholder="••••••••"
+                 onkeydown="if(event.key==='Enter')doSetNewPassword()">
+        </div>
+      </div>
+      <button class="btn-login" onclick="doSetNewPassword()" id="btnNewPassword">Enregistrer le mot de passe</button>
+      <div class="login-error" id="newPasswordError" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ APPLICATION ══════════════════ -->
+<div class="app" id="app">
+  <div id="loadingBar" style="display:none;position:fixed;top:0;left:0;right:0;height:3px;background:var(--or);z-index:9999;animation:loadPulse 1s ease-in-out infinite;"></div>
+
+  <div class="header">
+    <div class="header-brand">
+      <div class="header-emblem">
+        <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+          <path d="M20 4C11.2 4 4 11.2 4 20s7.2 16 16 16 16-7.2 16-16S28.8 4 20 4zm0 26c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10z" fill="white" opacity="0.9"/>
+          <path d="M20 12c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z" fill="white"/>
+        </svg>
+      </div>
+      <div>
+        <div class="header-name">Qualité OTSPN</div>
+        <div class="header-sub">ISO 9001 · §10.2 · OTSPN</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-role" id="headerRole"></div>
+      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showPage('tableau', this)">📋 Dysfonctionnements</button>
+    <button class="nav-btn" onclick="showPage('saisie', this)">➕ Nouveau signalement</button>
+    <button class="nav-btn" onclick="showPage('actions', this)" id="navActions">🔄 Actions récurrentes</button>
+    <button class="nav-btn" onclick="showPage('analyse', this)" id="navAnalyse">📊 Analyse</button>
+  </div>
+
+  <!-- ── PAGE TABLEAU DE BORD ── -->
+  <div class="page active" id="page-tableau">
+
+    <!-- Alertes -->
+    <div id="alertBar" style="display:none"></div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <!-- Registre -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <div class="card-title-icon">📋</div>
+          Registre des dysfonctionnements
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <input type="text" id="searchInput" placeholder="🔍 Rechercher…" oninput="renderTable()">
+        <select id="fStatut" onchange="renderTable()">
+          <option value="">Tous les statuts</option>
+          <option>Ouvert</option><option>En cours</option><option>Clos</option>
+        </select>
+        <select id="fGravite" onchange="renderTable()">
+          <option value="">Toute gravité</option>
+          <option>Grave</option><option>Modéré</option><option>Mineur</option>
+        </select>
+        <select id="fProcessus" onchange="renderTable()">
+          <option value="">Tout processus</option>
+          <option>Accueil &amp; boutiques</option>
+          <option>Administration &amp; finances</option>
+          <option>Centrale de réservation</option>
+          <option>Éditions</option>
+          <option>Événements</option>
+          <option>Médias &amp; presse</option>
+          <option>Numérique &amp; contenus</option>
+          <option>Ressources humaines</option>
+          <option>Stratégie territoire</option>
+          <option>Visites &amp; excursions</option>
+        </select>
+        <select id="fOT" onchange="renderTable()">
+          <option value="">OT ou externe</option>
+          <option value="Oui">Dépend de l'OT</option>
+          <option value="Non">Externe / Fournisseur</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" onclick="resetFilters()">✕ Réinit.</button>
+      </div>
+
+      <div class="table-wrap">
+        <table id="mainTable">
+          <thead>
+            <tr>
+              <th onclick="sortBy('id')" id="th-id">N°</th>
+              <th onclick="sortBy('date')" id="th-date">Date</th>
+              <th>Déclarant</th>
+              <th>Description</th>
+              <th onclick="sortBy('cause')" id="th-cause">Cause</th>
+              <th>OT ?</th>
+              <th onclick="sortBy('processus')" id="th-processus">Processus</th>
+              <th onclick="sortBy('gravite')" id="th-gravite">Gravité</th>
+              <th onclick="sortBy('statut')" id="th-statut">Statut</th>
+              <th>Redondant</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" style="display:none">
+        <div class="empty-state">
+          <div class="empty-state-icon">✅</div>
+          <h3>Aucun dysfonctionnement trouvé</h3>
+          <p>Modifiez vos filtres ou ajoutez un nouveau signalement.</p>
+        </div>
+      </div>
+      <div id="tableCount" style="font-size:12px;color:var(--gris);padding:10px 2px 0;"></div>
+    </div>
+  </div>
+
+  <!-- ── PAGE SAISIE ── -->
+  <div class="page" id="page-saisie">
+
+    <div class="teams-reminder">
+      <span style="font-size:18px;">💬</span>
+      <span>Rappel : signalez également ce dysfonctionnement dans le <strong>canal Teams dédié</strong> avant ou après cette saisie.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:20px;">
+        <div class="card-title-icon">🚨</div>
+        <span id="formTitle">Nouveau signalement</span>
+      </div>
+
+      <form id="dysfForm" novalidate>
+
+        <!-- SECTION DÉCLARATION -->
+        <div class="form-section-title">Identification du dysfonctionnement</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Déclarant</label>
+            <input class="form-input" id="f_declarant" type="text" readonly
+                   style="background:var(--gris-light);color:var(--brun-mid);cursor:default;">
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Date du dysfonctionnement</label>
+            <input class="form-input" id="f_date" type="date">
+            <span class="form-error" id="e_date">Champ obligatoire</span>
+          </div>
+          <div class="form-group full">
+            <label class="form-label required">Description détaillée</label>
+            <textarea class="form-textarea" id="f_description" placeholder="Décrivez précisément ce qui s'est passé, le contexte, les personnes ou services impactés…" rows="4"></textarea>
+            <span class="form-hint">Minimum 20 caractères</span>
+            <span class="form-error" id="e_description">Description trop courte (20 car. min.)</span>
+          </div>
+        </div>
+
+        <!-- CAUSES -->
+        <div class="form-section-title">Cause principale (1 ou 2 maximum)</div>
+        <div class="causes-grid" id="causesGrid">
+          <div class="cause-item" onclick="toggleCause(this,'Main d\'oeuvre')">
+            <div class="cause-dot"></div>
+            <span class="cause-label">👤 Main d'œuvre</span>
+          </div>
+          <div class="cause-item" onclick="toggleCause(this,'Matériel')">
+            <div class="cause-dot"></div>
+            <span class="cause-label">🔧 Matériel</span>
+          </div>
+          <div class="cause-item" onclick="toggleCause(this,'Méthode')">
+            <div class="cause-dot"></div>
+            <span class="cause-label">📋 Méthode</span>
+          </div>
+          <div class="cause-item" onclick="toggleCause(this,'Milieu')">
+            <div class="cause-dot"></div>
+            <span class="cause-label">🏢 Milieu</span>
+          </div>
+          <div class="cause-item" onclick="toggleCause(this,'Matière / matériaux')">
+            <div class="cause-dot"></div>
+            <span class="cause-label">📦 Matière / matériaux</span>
+          </div>
+        </div>
+        <span class="form-error" id="e_cause" style="display:none;margin-top:6px;">Sélectionnez au moins une cause</span>
+
+        <!-- OT / PROCESSUS / FOURNISSEUR -->
+        <div class="form-section-title">Périmètre</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label required">Dépend de l'Office de Tourisme ?</label>
+            <select class="form-select" id="f_ot" onchange="onOTChange()">
+              <option value="">— Sélectionner —</option>
+              <option value="Oui">Oui — interne à l'OT</option>
+              <option value="Non">Non — externe / fournisseur</option>
+            </select>
+            <span class="form-error" id="e_ot">Champ obligatoire</span>
+          </div>
+          <div class="form-group conditional" id="cond_processus">
+            <label class="form-label required">Processus concerné(s) (max 2)</label>
+            <select class="form-select" id="f_processus1" onchange="checkProcessus2()">
+              <option value="">— Processus 1 —</option>
+              <option>Accueil &amp; boutiques</option>
+              <option>Administration &amp; finances</option>
+              <option>Centrale de réservation</option>
+              <option>Éditions</option>
+              <option>Événements</option>
+              <option>Médias &amp; presse</option>
+              <option>Numérique &amp; contenus</option>
+              <option>Ressources humaines</option>
+              <option>Stratégie territoire</option>
+              <option>Visites &amp; excursions</option>
+            </select>
+            <span class="form-error" id="e_processus">Sélectionnez au moins un processus</span>
+          </div>
+          <div class="form-group conditional" id="cond_processus2" style="display:none;">
+            <label class="form-label">2ème processus (optionnel)</label>
+            <select class="form-select" id="f_processus2">
+              <option value="">— Aucun —</option>
+              <option>Accueil &amp; boutiques</option>
+              <option>Administration &amp; finances</option>
+              <option>Centrale de réservation</option>
+              <option>Éditions</option>
+              <option>Événements</option>
+              <option>Médias &amp; presse</option>
+              <option>Numérique &amp; contenus</option>
+              <option>Ressources humaines</option>
+              <option>Stratégie territoire</option>
+              <option>Visites &amp; excursions</option>
+            </select>
+          </div>
+          <div class="form-group conditional" id="cond_fournisseur">
+            <label class="form-label required">Fournisseur / prestataire concerné</label>
+            <input class="form-input" id="f_fournisseur" type="text" placeholder="Nom du fournisseur ou prestataire">
+            <span class="form-error" id="e_fournisseur">Champ obligatoire si externe</span>
+          </div>
+        </div>
+
+        <!-- RÉSOLUTION IMMÉDIATE -->
+        <div class="form-section-title">Résolution immédiate</div>
+        <div class="form-group">
+          <div class="toggle-row">
+            <label class="toggle">
+              <input type="checkbox" id="f_immediat" onchange="onImmediatChange()">
+              <div class="toggle-slider"></div>
+            </label>
+            <span class="toggle-label">Ce dysfonctionnement a été résolu immédiatement</span>
+          </div>
+        </div>
+        <div class="conditional" id="cond_resolution" style="margin-top:12px;">
+          <div class="form-group full">
+            <label class="form-label required">Comment a-t-il été résolu ?</label>
+            <textarea class="form-textarea" id="f_resolution" placeholder="Décrivez les actions immédiates menées…" rows="3"></textarea>
+            <span class="form-error" id="e_resolution">Décrivez la résolution</span>
+          </div>
+        </div>
+
+        <!-- SECTION PILOTE -->
+        <div class="form-section-title">Traitement (réservé aux pilotes)</div>
+        <div id="piloteSection">
+          <!-- rempli selon le rôle -->
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="resetForm()">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmit">✅ Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── PAGE ANALYSE ── -->
+  <div class="page" id="page-analyse">
+
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+      <select id="analyseAnnee" class="form-select" style="width:160px;" onchange="renderAnalyse()">
+        <option value="all">Toutes les années</option>
+        <option value="2026" selected>2026</option>
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+      </select>
+      <span style="font-size:13px;color:var(--gris);">Filtrez par année ou analysez toutes les données</span>
+    </div>
+
+    <!-- Indicateurs complétude & efficacité -->
+    <div class="stats-grid" id="analyseStats"></div>
+
+    <div class="analyse-grid">
+
+      <!-- Par cause -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">
+          <div class="card-title-icon">🔍</div>Top causes
+        </div>
+        <div id="chartCauses"></div>
+      </div>
+
+      <!-- Par processus -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">
+          <div class="card-title-icon">🗂</div>Par processus
+        </div>
+        <div id="chartProcessus"></div>
+      </div>
+
+      <!-- Par gravité -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">
+          <div class="card-title-icon">⚠️</div>Par gravité
+        </div>
+        <div id="chartGravite"></div>
+      </div>
+
+      <!-- Par statut -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">
+          <div class="card-title-icon">🔄</div>Par statut
+        </div>
+        <div id="chartStatut"></div>
+      </div>
+
+    </div>
+
+    <!-- Évolution mensuelle -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px;">
+        <div class="card-title-icon">📈</div>Évolution mensuelle
+      </div>
+      <div id="chartMensuel"></div>
+    </div>
+
+  </div>
+
+  <!-- ── PAGE ACTIONS RÉCURRENTES ── -->
+  <div class="page" id="page-actions">
+    <!-- Sous-onglets -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+      <div class="tabs" style="margin-bottom:0;">
+        <button class="tab active" id="tab-echeances" onclick="switchActionsTab('echeances',this)">📅 Échéances</button>
+        <button class="tab" id="tab-parprocessus" onclick="switchActionsTab('parprocessus',this)">🗂 Par processus</button>
+        <button class="tab" id="tab-toutesactions" onclick="switchActionsTab('toutesactions',this)">📋 Toutes les actions</button>
+      </div>
+      <div style="flex:1;"></div>
+      <button class="btn btn-primary btn-sm" id="btnNouvelleAction" onclick="openActionForm()">➕ Nouvelle action</button>
+    </div>
+
+    <!-- Alertes actions -->
+    <div id="actionsAlertBar" style="display:none;"></div>
+
+    <!-- Vue Échéances (30 prochains jours + en retard) -->
+    <div id="view-echeances">
+      <div class="stats-grid" id="actionsStats"></div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><div class="card-title-icon">⚠️</div>En retard</div>
+        </div>
+        <div class="table-wrap"><table id="tableRetard">
+          <thead><tr>
+            <th>Action</th><th>Processus</th><th>Responsable</th><th>Prévue le</th><th>Retard</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="tbodyRetard"></tbody>
+        </table></div>
+        <div id="emptyRetard" style="display:none;"><div class="empty-state"><div class="empty-state-icon">✅</div><h3>Aucune action en retard</h3></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><div class="card-title-icon">📅</div>À venir — 30 prochains jours</div>
+        </div>
+        <div class="table-wrap"><table id="tableAVenir">
+          <thead><tr>
+            <th>Action</th><th>Processus</th><th>Responsable</th><th>Prévue le</th><th>Dans</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="tbodyAVenir"></tbody>
+        </table></div>
+        <div id="emptyAVenir" style="display:none;"><div class="empty-state"><div class="empty-state-icon">📭</div><h3>Aucune échéance dans les 30 jours</h3></div></div>
+      </div>
+    </div>
+
+    <!-- Vue Par processus -->
+    <div id="view-parprocessus" style="display:none;">
+      <div class="filter-row">
+        <select id="filterProcessusActions" class="form-select" onchange="renderParProcessus()" style="min-width:220px;">
+          <option value="">Tous les processus</option>
+          <option>Accueil &amp; boutiques</option>
+          <option>Administration &amp; finances</option>
+          <option>Centrale de réservation</option>
+          <option>Éditions</option>
+          <option>Événements</option>
+          <option>Médias &amp; presse</option>
+          <option>Numérique &amp; contenus</option>
+          <option>Ressources humaines</option>
+          <option>Stratégie territoire</option>
+          <option>Visites &amp; excursions</option>
+        </select>
+        <select id="filterEtatActions" class="form-select" onchange="renderParProcessus()">
+          <option value="">Tous les états</option>
+          <option>Planifié</option>
+          <option>Réalisé dans les délais</option>
+          <option>Réalisé en retard</option>
+          <option>En retard</option>
+          <option>À planifier</option>
+        </select>
+      </div>
+      <div id="actionsParProcessusContainer"></div>
+    </div>
+
+    <!-- Vue Toutes les actions -->
+    <div id="view-toutesactions" style="display:none;">
+      <div class="filter-row">
+        <input type="text" id="searchActions" placeholder="🔍 Rechercher…" oninput="renderToutesActions()">
+        <select id="filterTheme" class="form-select" onchange="renderToutesActions()">
+          <option value="">Tous les thèmes</option>
+          <option>Gestion de l'organisation</option>
+          <option>Gestion des infrastructures</option>
+          <option>Gestion des partenariats</option>
+          <option>Gestion du matériel / produits</option>
+          <option>Gestion des risques</option>
+          <option>Suivi organisation</option>
+        </select>
+        <select id="filterSite" class="form-select" onchange="renderToutesActions()">
+          <option value="">Tous les sites</option>
+          <option>Actions communes</option>
+          <option>Sarlat</option>
+          <option>Selves</option>
+          <option>BIT LRG</option>
+          <option>BIT Beynac</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+          <input type="checkbox" id="showInactif" onchange="renderToutesActions()"> Afficher archivées
+        </label>
+      </div>
+      <div class="card">
+        <div class="table-wrap"><table id="tableToutesActions">
+          <thead><tr>
+            <th>Action</th><th>Thème</th><th>Processus</th><th>Fréquence</th>
+            <th>Responsable</th><th>Site</th><th>Prochaine</th><th>État</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="tbodyToutesActions"></tbody>
+        </table></div>
+        <div id="emptyToutesActions" style="display:none;"><div class="empty-state"><div class="empty-state-icon">📭</div><h3>Aucune action trouvée</h3></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── MODAL ACTION FORM ── -->
+<div class="modal-bg" id="modalActionBg" onclick="if(event.target===this)closeActionForm()">
+  <div class="modal" id="modalActionContent" style="max-width:860px;">
+    <div class="modal-head">
+      <h3 id="modalActionTitle">Nouvelle action récurrente</h3>
+      <button class="modal-close" onclick="closeActionForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label required">Thème</label>
+          <select class="form-select" id="af_theme">
+            <option value="">— Sélectionner —</option>
+            <option>Gestion de l'organisation</option>
+            <option>Gestion des infrastructures</option>
+            <option>Gestion des partenariats</option>
+            <option>Gestion du matériel / produits</option>
+            <option>Gestion des risques</option>
+            <option>Suivi organisation</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Processus</label>
+          <select class="form-select" id="af_processus">
+            <option value="">— Sélectionner —</option>
+            <option>Accueil &amp; boutiques</option>
+            <option>Administration &amp; finances</option>
+            <option>Centrale de réservation</option>
+            <option>Éditions</option>
+            <option>Événements</option>
+            <option>Médias &amp; presse</option>
+            <option>Numérique &amp; contenus</option>
+            <option>Ressources humaines</option>
+            <option>Stratégie territoire</option>
+            <option>Visites &amp; excursions</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label required">Libellé de l'action</label>
+          <input class="form-input" type="text" id="af_action" placeholder="Description de l'action à réaliser">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Référence</label>
+          <input class="form-input" type="text" id="af_reference" placeholder="Code, numéro de document…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prestataire</label>
+          <input class="form-input" type="text" id="af_prestataire" placeholder="Nom du prestataire">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Responsable</label>
+          <select class="form-select" id="af_responsable" onchange="validateRespIntervenant()">
+            <option value="">— Sélectionner —</option>
+          </select>
+          <span class="form-error" id="e_af_responsable" style="display:none;">Responsable et intervenant ne peuvent pas être la même personne</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Intervenant</label>
+          <select class="form-select" id="af_intervenant" onchange="validateRespIntervenant()">
+            <option value="">— Aucun —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Site</label>
+          <select class="form-select" id="af_site">
+            <option value="">— Sélectionner —</option>
+            <option>Actions communes</option>
+            <option>Sarlat</option>
+            <option>Selves</option>
+            <option>BIT LRG</option>
+            <option>BIT Beynac</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Fréquence</label>
+          <select class="form-select" id="af_frequence" onchange="onFrequenceChange()">
+            <option value="">— Sélectionner —</option>
+            <option value="Hebdomadaire" data-jours="7">Hebdomadaire</option>
+            <option value="Mensuelle" data-jours="30">Mensuelle</option>
+            <option value="Trimestrielle" data-jours="91">Trimestrielle</option>
+            <option value="Semestrielle" data-jours="182">Semestrielle</option>
+            <option value="Annuelle" data-jours="365">Annuelle</option>
+            <option value="Biennale" data-jours="730">Biennale</option>
+            <option value="Triennale" data-jours="1095">Triennale</option>
+            <option value="Quinquennale" data-jours="1825">Quinquennale</option>
+            <option value="Ponctuelle" data-jours="0">Ponctuelle</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Intervalle (jours) — modifiable</label>
+          <input class="form-input" type="number" id="af_frequence_jours" min="0" placeholder="Ex: 365">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dernière réalisation</label>
+          <input class="form-input" type="date" id="af_derniere_real">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prochaine réalisation — calculée auto</label>
+          <input class="form-input" type="date" id="af_prochaine_real">
+          <span class="form-hint">Modifiable manuellement</span>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Commentaires / règles</label>
+          <textarea class="form-textarea" id="af_commentaires" rows="3" placeholder="Règles à respecter, notes importantes…"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="closeActionForm()">Annuler</button>
+        <button class="btn btn-primary" onclick="saveAction()" id="btnSaveAction">✅ Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL RÉALISATION ── -->
+<div class="modal-bg" id="modalRealBg" onclick="if(event.target===this)closeRealForm()">
+  <div class="modal" id="modalRealContent" style="max-width:560px;">
+    <div class="modal-head">
+      <h3 id="modalRealTitle">Marquer comme réalisée</h3>
+      <button class="modal-close" onclick="closeRealForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="realActionContext" style="background:var(--vert-pale);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--vert-fonce);"></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label required">Date de réalisation</label>
+          <input class="form-input" type="date" id="rf_date_reelle">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">État</label>
+          <select class="form-select" id="rf_etat">
+            <option value="Réalisé dans les délais">Réalisé dans les délais</option>
+            <option value="Réalisé en retard">Réalisé en retard</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Commentaire</label>
+          <textarea class="form-textarea" id="rf_commentaire" rows="2" placeholder="Observations sur cette réalisation…"></textarea>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Prochaine réalisation prévue</label>
+          <input class="form-input" type="date" id="rf_prochaine">
+          <span class="form-hint">Calculée automatiquement — modifiable</span>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="closeRealForm()">Annuler</button>
+        <button class="btn btn-primary" onclick="saveRealisation()" id="btnSaveReal">✅ Confirmer la réalisation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL DÉTAIL DYSFONCTIONNEMENTS ── -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<div class="version-tag">Sarlat Périgord Noir Tourisme · ISO 9001 §10.2 · §8.5</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DONNÉES & CONSTANTES
+// ══════════════════════════════════════════════
+const PROCESSUS_LIST = [
+  'Accueil & boutiques','Administration & finances','Centrale de réservation',
+  'Éditions','Événements','Médias & presse','Numérique & contenus',
+  'Ressources humaines','Stratégie territoire','Visites & excursions'
+];
+const CAUSES_LIST = ["Main d'œuvre","Matériel","Méthode","Milieu","Matière / matériaux"];
+
+let currentRole = null;
+let currentUser = null;
+let currentUserId = null;  // UUID Supabase Auth
+let currentEditId = null;
+let sortField = 'date';
+let sortDir = 'desc';
+let selectedCauses = [];
+
+// Production — pas de données de test
+
+// ══════════════════════════════════════════════
+// CONFIG SUPABASE
+// ══════════════════════════════════════════════
+const SB = {
+  url:          'https://sikunniqcurvpemdkvfa.supabase.co',
+  key:          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa3VubmlxY3VydnBlbWRrdmZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTUwODcsImV4cCI6MjA5MDU3MTA4N30.B-oNoZagbHP98zVu2HlePaT1dN7gauqHV1rTqAMSmbA',
+  table:        'dysfonctionnements',
+  sessionToken: null
+};
+
+function sbHeaders() {
+  return {
+    'Content-Type':  'application/json',
+    'apikey':        SB.key,
+    'Authorization': `Bearer ${SB.sessionToken || SB.key}`
+  };
+}
+
+let _cache = null;
+let _cacheTime = 0;
+const CACHE_TTL = 20000;
+
+function showLoading(on) {
+  const el = document.getElementById('loadingBar');
+  if (el) el.style.display = on ? 'block' : 'none';
+}
+
+async function loadData(forceRefresh = false) {
+  if (!forceRefresh && _cache && Date.now() - _cacheTime < CACHE_TTL) return _cache;
+  showLoading(true);
+  try {
+    const resp = await fetch(
+      `${SB.url}/rest/v1/${SB.table}?order=date_saisie.desc&limit=1000`,
+      { headers: { ...sbHeaders(), 'Prefer': 'return=representation' } }
+    );
+    if (!resp.ok) throw new Error('Erreur lecture: ' + resp.status);
+    const rows = await resp.json();
+    _cache = rows.map(r => ({
+      id:               r.id,
+      date:             r.date,
+      declarant:        r.declarant,
+      description:      r.description,
+      causes:           r.causes ? JSON.parse(r.causes) : [],
+      ot:               r.ot,
+      processus:        r.processus ? JSON.parse(r.processus) : [],
+      fournisseur:      r.fournisseur || '',
+      immediat:         r.immediat || false,
+      resolution:       r.resolution || '',
+      gravite:          r.gravite || '',
+      statut:           r.statut || 'Ouvert',
+      redondant:        r.redondant || '',
+      actionCorrective: r.action_corrective || '',
+      efficacite:       r.efficacite || '',
+      dateSaisie:       r.date_saisie,
+      createdBy:        r.created_by || null
+    }));
+    _cacheTime = Date.now();
+    return _cache;
+  } catch(e) {
+    console.error('loadData error:', e);
+    return _cache || [];
+  } finally {
+    showLoading(false);
+  }
+}
+
+function entryToRow(entry) {
+  return {
+    id:               entry.id,
+    date:             entry.date,
+    declarant:        entry.declarant,
+    description:      entry.description,
+    causes:           JSON.stringify(entry.causes || []),
+    ot:               entry.ot,
+    processus:        JSON.stringify(entry.processus || []),
+    fournisseur:      entry.fournisseur || '',
+    immediat:         entry.immediat || false,
+    resolution:       entry.resolution || '',
+    gravite:          entry.gravite || '',
+    statut:           entry.statut || 'Ouvert',
+    redondant:        entry.redondant || '',
+    action_corrective: entry.actionCorrective || '',
+    efficacite:       entry.efficacite || '',
+    date_saisie:      entry.dateSaisie || new Date().toISOString(),
+    created_by:       entry.createdBy || currentUserId || null
+  };
+}
+
+async function saveEntry(entry) {
+  showLoading(true);
+  try {
+    const row = entryToRow(entry);
+    const resp = await fetch(
+      `${SB.url}/rest/v1/${SB.table}`,
+      {
+        method: 'POST',
+        headers: { ...sbHeaders(), 'Prefer': 'resolution=merge-duplicates,return=representation' },
+        body: JSON.stringify(row)
+      }
+    );
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(JSON.stringify(err));
+    }
+    _cache = null; // invalider le cache
+  } finally {
+    showLoading(false);
+  }
+}
+
+async function deleteEntry(id) {
+  showLoading(true);
+  try {
+    const resp = await fetch(
+      `${SB.url}/rest/v1/${SB.table}?id=eq.${id}`,
+      { method: 'DELETE', headers: sbHeaders() }
+    );
+    if (!resp.ok) throw new Error('Erreur suppression: ' + resp.status);
+    _cache = null;
+  } finally {
+    showLoading(false);
+  }
+}
+
+async function nextId() {
+  const data = await loadData();
+  const year = new Date().getFullYear();
+  const ids = data.filter(d => d.id && d.id.includes(String(year)))
+    .map(d => parseInt(d.id.split('-')[2]) || 0);
+  const n = ids.length ? Math.max(...ids) + 1 : 1;
+  return `DYS-${year}-${String(n).padStart(3,'0')}`;
+}
+
+// ══════════════════════════════════════════════
+// AUTHENTIFICATION SUPABASE
+// ══════════════════════════════════════════════
+
+async function doLogin() {
+  const btn = document.getElementById('btnLogin');
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+
+  if (!email || !password) {
+    errEl.textContent = 'Renseignez votre email et mot de passe.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Connexion…';
+  errEl.style.display = 'none';
+
+  try {
+    // 1. Authentification Supabase
+    const authResp = await fetch(`${SB.url}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SB.key },
+      body: JSON.stringify({ email, password })
+    });
+    const authData = await authResp.json();
+
+    if (!authResp.ok || !authData.access_token) {
+      throw new Error(authData.error_description || 'Identifiants incorrects');
+    }
+
+    // Stocker le token de session
+    SB.sessionToken = authData.access_token;
+    const userId = authData.user.id;
+
+    // 2. Récupérer le profil utilisateur (nom + rôle)
+    const userResp = await fetch(
+      `${SB.url}/rest/v1/utilisateurs?id=eq.${userId}&select=nom,role`,
+      { headers: { ...sbHeaders(), 'Authorization': `Bearer ${SB.sessionToken}` } }
+    );
+    const users = await userResp.json();
+
+    if (!users.length) {
+      throw new Error('Compte non configuré. Contactez l\'administrateur.');
+    }
+
+    const { nom, role } = users[0];
+
+    currentRole    = role;
+    currentUser    = nom;
+    currentUserId  = userId;
+
+    // 3. Lancer l'application
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    const labels = { declarant:'Déclarant', pilote:'Pilote / Responsable', direction:'Direction / Qualité' };
+    document.getElementById('headerRole').textContent = `${currentUser} · ${labels[currentRole]}`;
+    document.getElementById('navAnalyse').style.display = currentRole === 'declarant' ? 'none' : '';
+
+    showLoading(true);
+    await loadData(true);
+    initForm();
+    await renderStats();
+    await renderTable();
+    await renderAlerts();
+
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Se connecter';
+  }
+}
+
+async function doResetPassword() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) {
+    document.getElementById('loginError').textContent = 'Entrez votre email d\'abord.';
+    document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  await fetch(`${SB.url}/auth/v1/recover`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB.key },
+    body: JSON.stringify({ email })
+  });
+  document.getElementById('resetMsg').style.display = 'block';
+}
+
+async function doSetNewPassword() {
+  const btn = document.getElementById('btnNewPassword');
+  const pwd = document.getElementById('newPassword').value;
+  const confirm = document.getElementById('confirmPassword').value;
+  const errEl = document.getElementById('newPasswordError');
+
+  if (pwd.length < 8) {
+    errEl.textContent = 'Le mot de passe doit contenir au moins 8 caractères.';
+    errEl.style.display = 'block'; return;
+  }
+  if (pwd !== confirm) {
+    errEl.textContent = 'Les mots de passe ne correspondent pas.';
+    errEl.style.display = 'block'; return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement…';
+  errEl.style.display = 'none';
+
+  try {
+    const resp = await fetch(`${SB.url}/auth/v1/user`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SB.key,
+        'Authorization': `Bearer ${SB.sessionToken}`
+      },
+      body: JSON.stringify({ password: pwd })
+    });
+    if (!resp.ok) throw new Error('Erreur lors de la mise à jour.');
+
+    // Succès — retour à la connexion normale
+    document.getElementById('newPasswordForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('resetMsg').style.display = 'block';
+    document.getElementById('resetMsg').textContent = 'Mot de passe mis à jour. Connectez-vous.';
+    // Nettoyer le hash de l'URL
+    history.replaceState(null, '', window.location.pathname);
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enregistrer le mot de passe';
+  }
+}
+
+// Détecter le token de recovery dans l'URL au chargement
+function checkRecoveryToken() {
+  const hash = window.location.hash;
+  if (!hash) return;
+  const params = new URLSearchParams(hash.substring(1));
+  const type = params.get('type');
+  const accessToken = params.get('access_token');
+
+  if (type === 'recovery' && accessToken) {
+    // Stocker le token pour pouvoir mettre à jour le mot de passe
+    SB.sessionToken = accessToken;
+    // Afficher le formulaire de nouveau mot de passe
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('newPasswordForm').style.display = 'block';
+  }
+}
+
+// Lancer la détection au chargement de la page
+window.addEventListener('DOMContentLoaded', checkRecoveryToken);
+
+function logout() {
+  currentRole = null; currentUser = null; currentUserId = null; currentEditId = null;
+  SB.sessionToken = null;
+  _cache = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('resetMsg').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+async function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'saisie') { initForm(); resetForm(); }
+  if (name === 'analyse') { await loadData(true); renderAnalyse(); }
+  if (name === 'tableau') { await loadData(true); renderStats(); renderTable(); renderAlerts(); }
+  if (name === 'actions') { await initActionsPage(); }
+}
+
+// ══════════════════════════════════════════════
+// FORMULAIRE — INIT & LOGIQUE
+// ══════════════════════════════════════════════
+function initForm() {
+  // Section pilote
+  const ps = document.getElementById('piloteSection');
+  if (currentRole === 'pilote' || currentRole === 'direction') {
+    ps.innerHTML = `
+      <div class="pilote-section">
+        <div class="pilote-badge">⚙️ Section pilote</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Gravité</label>
+            <select class="form-select" id="f_gravite">
+              <option value="">— À qualifier —</option>
+              <option value="Grave">🔴 Grave</option>
+              <option value="Modéré">🟠 Modéré</option>
+              <option value="Mineur">🔵 Mineur</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Statut de traitement</label>
+            <select class="form-select" id="f_statut">
+              <option value="Ouvert">Ouvert</option>
+              <option value="En cours">En cours</option>
+              <option value="Clos">Clos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Redondant ?</label>
+            <select class="form-select" id="f_redondant">
+              <option value="">— Non qualifié —</option>
+              <option value="Oui">Oui</option>
+              <option value="Non">Non</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Action corrective menée</label>
+            <textarea class="form-textarea" id="f_actionCorrective" placeholder="Décrivez les actions correctives mises en place…" rows="3"></textarea>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Efficacité de la solution</label>
+            <textarea class="form-textarea" id="f_efficacite" placeholder="La solution empêche-t-elle la réapparition ? Retour d'expérience…" rows="2"></textarea>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    ps.innerHTML = `<div class="readonly-block">🔒 Cette section est réservée aux pilotes et à la direction. Vous pouvez déclarer le dysfonctionnement — un pilote complétera le traitement.</div>`;
+  }
+  // Pré-remplir le déclarant
+  const df2 = document.getElementById('f_declarant');
+  if (df2 && !currentEditId) df2.value = currentUser || '';
+  const df = document.getElementById('f_date');
+  if (df && !currentEditId) df.value = new Date().toISOString().split('T')[0];
+}
+
+function onOTChange() {
+  const val = document.getElementById('f_ot').value;
+  document.getElementById('cond_processus').style.display = val === 'Oui' ? 'flex' : 'none';
+  document.getElementById('cond_fournisseur').style.display = val === 'Non' ? 'flex' : 'none';
+  document.getElementById('cond_processus').className = val === 'Oui' ? 'form-group visible' : 'form-group conditional';
+  document.getElementById('cond_fournisseur').className = val === 'Non' ? 'form-group visible' : 'form-group conditional';
+}
+
+function checkProcessus2() {
+  const v = document.getElementById('f_processus1').value;
+  document.getElementById('cond_processus2').style.display = v ? 'flex' : 'none';
+}
+
+function onImmediatChange() {
+  const checked = document.getElementById('f_immediat').checked;
+  document.getElementById('cond_resolution').style.display = checked ? 'block' : 'none';
+  document.getElementById('cond_resolution').className = checked ? 'conditional visible' : 'conditional';
+}
+
+function toggleCause(el, cause) {
+  const alreadySelected = el.classList.contains('selected');
+  if (!alreadySelected && selectedCauses.length >= 2) {
+    showToast('Maximum 2 causes sélectionnables', 'error'); return;
+  }
+  el.classList.toggle('selected', !alreadySelected);
+  if (alreadySelected) selectedCauses = selectedCauses.filter(c => c !== cause);
+  else selectedCauses.push(cause);
+}
+
+function resetForm() {
+  currentEditId = null;
+  document.getElementById('formTitle').textContent = 'Nouveau signalement';
+  document.getElementById('dysfForm').reset();
+  selectedCauses = [];
+  document.querySelectorAll('.cause-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById('cond_processus').style.display = 'none';
+  document.getElementById('cond_fournisseur').style.display = 'none';
+  document.getElementById('cond_processus2').style.display = 'none';
+  document.getElementById('cond_resolution').style.display = 'none';
+  document.querySelectorAll('.form-error').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.form-input,.form-select,.form-textarea').forEach(el => el.classList.remove('error'));
+  initForm();
+}
+
+// ══════════════════════════════════════════════
+// VALIDATION & SOUMISSION
+// ══════════════════════════════════════════════
+function validateField(id, errorId, condition) {
+  const el = document.getElementById(id);
+  const err = document.getElementById(errorId);
+  if (!el || !err) return true;
+  const ok = condition(el.value);
+  el.classList.toggle('error', !ok);
+  err.style.display = ok ? 'none' : 'block';
+  return ok;
+}
+
+document.getElementById('dysfForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const btnSubmit = document.getElementById('btnSubmit');
+  if (btnSubmit.disabled) return;
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = '⏳ Enregistrement…';
+
+  const isPilote = currentRole === 'pilote' || currentRole === 'direction';
+  const isPiloteEditing = isPilote && !!currentEditId;
+
+  console.log('[submit] role:', currentRole, '| editId:', currentEditId, '| isPiloteEditing:', isPiloteEditing);
+
+  try {
+    let valid = true;
+
+    if (!isPiloteEditing) {
+      valid &= validateField('f_date','e_date', v => v !== '');
+      valid &= validateField('f_description','e_description', v => v.trim().length >= 20);
+      valid &= validateField('f_ot','e_ot', v => v !== '');
+
+      const errCause = document.getElementById('e_cause');
+      if (selectedCauses.length === 0) {
+        errCause.style.display = 'block'; valid = false;
+      } else { errCause.style.display = 'none'; }
+
+      const ot = document.getElementById('f_ot').value;
+      if (ot === 'Oui') valid &= validateField('f_processus1','e_processus', v => v !== '');
+      if (ot === 'Non') valid &= validateField('f_fournisseur','e_fournisseur', v => v.trim().length > 0);
+
+      const imm = document.getElementById('f_immediat').checked;
+      if (imm) valid &= validateField('f_resolution','e_resolution', v => v.trim().length > 5);
+    }
+
+    if (!valid) {
+      showToast('Vérifiez les champs obligatoires', 'error');
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = '✅ Enregistrer';
+      return;
+    }
+
+    const immediat = isPiloteEditing ? false : document.getElementById('f_immediat').checked;
+    const allData = await loadData(true);
+    const existingEntry = currentEditId ? allData.find(d => d.id === currentEditId) : null;
+
+    console.log('[submit] existingEntry:', existingEntry?.id, '| currentEditId:', currentEditId);
+
+    const processus = [];
+    const p1 = document.getElementById('f_processus1')?.value;
+    if (p1) processus.push(p1);
+    const p2 = document.getElementById('f_processus2')?.value;
+    if (p2 && p2 !== p1) processus.push(p2);
+
+    let entry;
+
+    if (isPiloteEditing && existingEntry) {
+      // Pilote modifie : on ne touche QUE aux champs pilote
+      entry = {
+        ...existingEntry,
+        gravite:          document.getElementById('f_gravite')?.value || existingEntry.gravite || '',
+        statut:           document.getElementById('f_statut')?.value || existingEntry.statut || 'Ouvert',
+        redondant:        document.getElementById('f_redondant')?.value || existingEntry.redondant || '',
+        actionCorrective: document.getElementById('f_actionCorrective')?.value?.trim() || existingEntry.actionCorrective || '',
+        efficacite:       document.getElementById('f_efficacite')?.value?.trim() || existingEntry.efficacite || '',
+      };
+    } else if (currentEditId && !isPilote && existingEntry) {
+      // Déclarant modifie sa fiche
+      entry = {
+        ...existingEntry,
+        date:        document.getElementById('f_date').value,
+        description: document.getElementById('f_description').value.trim(),
+        causes:      [...selectedCauses],
+        ot:          document.getElementById('f_ot').value,
+        processus,
+        fournisseur: document.getElementById('f_fournisseur')?.value?.trim() || '',
+        immediat,
+        resolution:  immediat ? document.getElementById('f_resolution').value.trim() : '',
+      };
+    } else {
+      // Nouvelle fiche
+      entry = {
+        id:               await nextId(),
+        date:             document.getElementById('f_date').value,
+        declarant:        currentUser,
+        description:      document.getElementById('f_description').value.trim(),
+        causes:           [...selectedCauses],
+        ot:               document.getElementById('f_ot').value,
+        processus,
+        fournisseur:      document.getElementById('f_fournisseur')?.value?.trim() || '',
+        immediat,
+        resolution:       immediat ? document.getElementById('f_resolution').value.trim() : '',
+        gravite:          isPilote ? (document.getElementById('f_gravite')?.value || '') : '',
+        statut:           isPilote ? (document.getElementById('f_statut')?.value || 'Ouvert') : 'Ouvert',
+        redondant:        isPilote ? (document.getElementById('f_redondant')?.value || '') : '',
+        actionCorrective: isPilote ? (document.getElementById('f_actionCorrective')?.value?.trim() || '') : '',
+        efficacite:       isPilote ? (document.getElementById('f_efficacite')?.value?.trim() || '') : '',
+        dateSaisie:       new Date().toISOString(),
+      };
+    }
+
+    console.log('[submit] entry à sauvegarder:', entry.id, entry.statut, entry.gravite);
+
+    await saveEntry(entry);
+    _cache = null;
+    showToast(currentEditId ? `Fiche ${entry.id} mise à jour` : `Fiche ${entry.id} enregistrée`, 'success');
+    resetForm();
+    await showPage('tableau', document.querySelectorAll('.nav-btn')[0]);
+    document.querySelectorAll('.nav-btn')[0].classList.add('active');
+
+  } catch(err) {
+    console.error('[submit] ERREUR:', err);
+    showToast('Erreur : ' + err.message, 'error');
+  } finally {
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = '✅ Enregistrer';
+  }
+});
+
+// ══════════════════════════════════════════════
+// TABLEAU
+// ══════════════════════════════════════════════
+async function getFiltered() {
+  const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  const fSt = document.getElementById('fStatut')?.value || '';
+  const fGr = document.getElementById('fGravite')?.value || '';
+  const fPr = document.getElementById('fProcessus')?.value || '';
+  const fOT = document.getElementById('fOT')?.value || '';
+  const allData = await loadData();
+  return allData.filter(d => {
+    const txt = [d.id, d.declarant, d.description, d.fournisseur, ...(d.processus||[]), ...(d.causes||[])].join(' ').toLowerCase();
+    return (!search || txt.includes(search))
+      && (!fSt || d.statut === fSt)
+      && (!fGr || d.gravite === fGr)
+      && (!fPr || (d.processus||[]).includes(fPr))
+      && (!fOT || d.ot === fOT);
+  });
+}
+
+function sortBy(field) {
+  if (sortField === field) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortField = field; sortDir = 'asc'; }
+  document.querySelectorAll('th[id^="th-"]').forEach(th => th.classList.remove('sort-asc','sort-desc'));
+  const th = document.getElementById('th-'+field);
+  if (th) th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+  renderTable();
+}
+
+async function renderTable() {
+  let data = await getFiltered();
+  data.sort((a,b) => {
+    let va = a[sortField]||'', vb = b[sortField]||'';
+    if (Array.isArray(va)) va = va.join(',');
+    if (Array.isArray(vb)) vb = vb.join(',');
+    const r = va < vb ? -1 : va > vb ? 1 : 0;
+    return sortDir === 'asc' ? r : -r;
+  });
+
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('tableCount');
+
+  if (!data.length) {
+    tbody.innerHTML = ''; empty.style.display = 'block';
+    count.textContent = ''; return;
+  }
+  empty.style.display = 'none';
+  count.textContent = `${data.length} fiche${data.length>1?'s':''} affichée${data.length>1?'s':''}`;
+
+  tbody.innerHTML = data.map(d => {
+    const gCls = d.gravite==='Grave'?'b-grave':d.gravite==='Modéré'?'b-modere':'b-mineur';
+    const sCls = d.statut==='Ouvert'?'b-ouvert':d.statut==='En cours'?'b-encours':'b-clos';
+    const rCls = d.redondant==='Oui'?'b-oui':d.redondant==='Non'?'b-non':'';
+    const canDel = currentRole === 'direction';
+    const isPilote = currentRole === 'pilote' || currentRole === 'direction';
+    // Déclarant : peut modifier seulement ses propres fiches
+    const isOwner = d.createdBy === currentUserId;
+    const canEdit = isPilote || isOwner;
+    return `<tr>
+      <td class="td-num">${d.id}</td>
+      <td style="white-space:nowrap">${fmtDate(d.date)}</td>
+      <td style="white-space:nowrap">${d.declarant}</td>
+      <td class="td-desc" title="${d.description}">${d.description}</td>
+      <td style="font-size:12px">${(d.causes||[]).join('<br>')}</td>
+      <td><span class="badge ${d.ot==='Oui'?'b-non':'b-oui'}">${d.ot==='Oui'?'Interne':'Externe'}</span></td>
+      <td style="font-size:12px">${(d.processus||[]).join('<br>') || (d.fournisseur||'—')}</td>
+      <td>${d.gravite?`<span class="badge ${gCls}">${d.gravite}</span>`:'<span style="color:var(--gris);font-size:12px">—</span>'}</td>
+      <td><span class="badge ${sCls}">${d.statut||'Ouvert'}</span></td>
+      <td>${d.redondant?`<span class="badge ${rCls}">${d.redondant}</span>`:'<span style="color:var(--gris);font-size:12px">—</span>'}</td>
+      <td>
+        <div style="display:flex;gap:5px;flex-wrap:nowrap">
+          <button class="btn btn-secondary btn-xs" onclick="openDetail('${d.id}')">👁</button>
+          ${canEdit?`<button class="btn btn-primary btn-xs" onclick="openEdit('${d.id}')">✏️</button>`:''}
+          ${canDel?`<button class="btn btn-danger btn-xs" onclick="deleteItem('${d.id}')">🗑</button>`:''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function resetFilters() {
+  ['searchInput','fStatut','fGravite','fProcessus','fOT'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  renderTable();
+}
+
+// ══════════════════════════════════════════════
+// STATS & ALERTES
+// ══════════════════════════════════════════════
+async function renderStats() {
+  const data = await loadData();
+  const total = data.length;
+  const ouverts = data.filter(d => d.statut === 'Ouvert').length;
+  const encours = data.filter(d => d.statut === 'En cours').length;
+  const clos = data.filter(d => d.statut === 'Clos').length;
+  const graves = data.filter(d => d.gravite === 'Grave' && d.statut !== 'Clos').length;
+  const tauxRes = total ? Math.round(clos/total*100) : 0;
+  // Complétude : fiches avec gravite + statut rempli par pilote
+  const completes = data.filter(d => d.gravite && d.statut === 'Clos' && d.actionCorrective).length;
+  const tauxCompl = clos ? Math.round(completes/clos*100) : 0;
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total 2026</div></div>
+    <div class="stat-card rouge"><div class="stat-num">${ouverts}</div><div class="stat-label">Ouverts</div></div>
+    <div class="stat-card orange"><div class="stat-num">${encours}</div><div class="stat-label">En cours</div></div>
+    <div class="stat-card vert"><div class="stat-num">${clos}</div><div class="stat-label">Clôturés</div></div>
+    <div class="stat-card rouge"><div class="stat-num">${graves}</div><div class="stat-label">Graves non clôturés</div></div>
+    <div class="stat-card bleu"><div class="stat-num">${tauxRes}%</div><div class="stat-label">Taux de résolution</div></div>
+    <div class="stat-card bleu"><div class="stat-num">${tauxCompl}%</div><div class="stat-label">Complétude pilotes</div><div class="stat-sub">fiches closes renseignées</div></div>
+  `;
+}
+
+async function renderAlerts() {
+  const data = await loadData();
+  const now = new Date();
+  const alerts = [];
+
+  // Graves non clôturés
+  const gravesOuverts = data.filter(d => d.gravite === 'Grave' && d.statut !== 'Clos');
+  if (gravesOuverts.length) alerts.push(`<strong>${gravesOuverts.length} dysfonctionnement${gravesOuverts.length>1?'s':''} grave${gravesOuverts.length>1?'s':''}</strong> non clôturé${gravesOuverts.length>1?'s':''} — traitement prioritaire requis`);
+
+  // Fiches sans gravité qualifiée
+  const sansPilote = data.filter(d => !d.gravite && d.statut !== 'Clos');
+  if (sansPilote.length) alerts.push(`<strong>${sansPilote.length} fiche${sansPilote.length>1?'s':''}</strong> en attente de qualification par un pilote (gravité non renseignée)`);
+
+  // Fiches ouvertes depuis +15 jours
+  const vieilles = data.filter(d => {
+    if (d.statut === 'Clos') return false;
+    const diff = (now - new Date(d.dateSaisie)) / 86400000;
+    return diff > 15;
+  });
+  if (vieilles.length) alerts.push(`<strong>${vieilles.length} fiche${vieilles.length>1?'s':''}</strong> ouverte${vieilles.length>1?'s':''} depuis plus de 15 jours sans clôture`);
+
+  const bar = document.getElementById('alertBar');
+  if (alerts.length) {
+    bar.style.display = 'flex';
+    bar.innerHTML = `<span class="alert-bar-icon">⚠️</span><div>${alerts.map(a=>`<div>${a}</div>`).join('')}</div>`;
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+// ══════════════════════════════════════════════
+// DÉTAIL & ÉDITION
+// ══════════════════════════════════════════════
+async function openDetail(id) {
+  const allData = await loadData();
+  const d = allData.find(x => x.id === id);
+  if (!d) return;
+  const gCls = d.gravite==='Grave'?'b-grave':d.gravite==='Modéré'?'b-modere':'b-mineur';
+  const sCls = d.statut==='Ouvert'?'b-ouvert':d.statut==='En cours'?'b-encours':'b-clos';
+  const canDel = currentRole === 'direction';
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-head">
+      <h3>${d.id}</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-section">
+        <div class="detail-section-title">Identification</div>
+        <div class="detail-row"><span class="detail-lbl">Date</span><span class="detail-val">${fmtDate(d.date)}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Déclarant</span><span class="detail-val">${d.declarant}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Dépend de l'OT</span><span class="detail-val">${d.ot}</span></div>
+        ${d.ot==='Oui'?`<div class="detail-row"><span class="detail-lbl">Processus</span><span class="detail-val">${(d.processus||[]).join(', ')}</span></div>`:''}
+        ${d.ot==='Non'?`<div class="detail-row"><span class="detail-lbl">Fournisseur</span><span class="detail-val">${d.fournisseur}</span></div>`:''}
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Description & Cause</div>
+        <div class="detail-row"><span class="detail-lbl">Description</span><span class="detail-val" style="white-space:pre-wrap">${d.description}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Cause(s)</span><span class="detail-val">${(d.causes||[]).join(', ')}</span></div>
+        ${d.immediat?`<div class="detail-row"><span class="detail-lbl">Résolution immédiate</span><span class="detail-val">${d.resolution}</span></div>`:''}
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Traitement — §10.2 ISO 9001</div>
+        <div class="detail-row"><span class="detail-lbl">Gravité</span><span class="detail-val">${d.gravite?`<span class="badge ${gCls}">${d.gravite}</span>`:'—'}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Statut</span><span class="detail-val"><span class="badge ${sCls}">${d.statut||'Ouvert'}</span></span></div>
+        <div class="detail-row"><span class="detail-lbl">Redondant</span><span class="detail-val">${d.redondant||'—'}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Action corrective</span><span class="detail-val" style="white-space:pre-wrap">${d.actionCorrective||'—'}</span></div>
+        <div class="detail-row"><span class="detail-lbl">Efficacité</span><span class="detail-val" style="white-space:pre-wrap">${d.efficacite||'—'}</span></div>
+      </div>
+      <div class="modal-actions">
+        ${currentRole==='pilote'||currentRole==='direction'?`
+          <div style="display:flex;gap:8px;align-items:center;flex:1;">
+            <select id="modalStatut" class="form-select" style="width:180px;">
+              <option value="Ouvert" ${d.statut==='Ouvert'?'selected':''}>Ouvert</option>
+              <option value="En cours" ${d.statut==='En cours'?'selected':''}>En cours</option>
+              <option value="Clos" ${d.statut==='Clos'?'selected':''}>Clos</option>
+            </select>
+            <button class="btn btn-gold btn-sm" onclick="changeStatut('${d.id}')">Changer statut</button>
+          </div>`:''}
+        <button class="btn btn-primary btn-sm" onclick="openEdit('${d.id}')">✏️ Modifier</button>
+        ${canDel?`<button class="btn btn-danger btn-sm" onclick="deleteItem('${d.id}')">🗑 Supprimer</button>`:''}
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">Fermer</button>
+      </div>
+    </div>`;
+  document.getElementById('modalBg').classList.add('open');
+}
+
+async function changeStatut(id) {
+  const statut = document.getElementById('modalStatut').value;
+  const data = await loadData();
+  const entry = data.find(d => d.id === id);
+  if (!entry) return;
+  entry.statut = statut;
+  try {
+    await saveEntry(entry);
+    closeModal();
+    await renderStats(); await renderTable(); await renderAlerts();
+    showToast(`Statut de ${id} → ${statut}`, 'success');
+  } catch(e) { showToast('Erreur : ' + e.message, 'error'); }
+}
+
+async function openEdit(id) {
+  closeModal();
+  const allData = await loadData();
+  const d = allData.find(x => x.id === id);
+  if (!d) return;
+
+  const isPilote = currentRole === 'pilote' || currentRole === 'direction';
+
+  // Naviguer vers saisie SANS resetForm
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-saisie').classList.add('active');
+  document.querySelectorAll('.nav-btn')[1].classList.add('active');
+  initForm();
+
+  // currentEditId APRÈS initForm
+  currentEditId = id;
+
+  if (isPilote) {
+    // Pilote : affiche un formulaire simplifié avec seulement ses champs
+    document.getElementById('formTitle').textContent = `Traitement — ${id} (${d.declarant || '—'}, ${d.date || ''})`;
+    setTimeout(() => {
+      // Pré-remplir les champs déclarant en lecture seule pour contexte
+      document.getElementById('f_declarant').value = d.declarant || '';
+      document.getElementById('f_date').value = d.date || '';
+      document.getElementById('f_description').value = d.description || '';
+
+      // Causes affichées
+      selectedCauses = [...(d.causes||[])];
+      document.querySelectorAll('.cause-item').forEach(el => {
+        const lbl = el.querySelector('.cause-label').textContent.replace(/^.\s/,'');
+        const match = selectedCauses.some(c => lbl.includes(c.replace(/'/g,"'")));
+        el.classList.toggle('selected', match);
+      });
+
+      document.getElementById('f_ot').value = d.ot || '';
+      onOTChange();
+      if (d.processus?.[0]) {
+        document.getElementById('f_processus1').value = d.processus[0];
+        checkProcessus2();
+        if (d.processus[1]) document.getElementById('f_processus2').value = d.processus[1];
+      }
+      if (d.fournisseur) document.getElementById('f_fournisseur').value = d.fournisseur;
+      document.getElementById('f_immediat').checked = d.immediat || false;
+      onImmediatChange();
+      if (d.immediat && d.resolution) document.getElementById('f_resolution').value = d.resolution;
+
+      // Champs pilote
+      if (d.gravite) document.getElementById('f_gravite').value = d.gravite;
+      if (d.statut)  document.getElementById('f_statut').value  = d.statut;
+      if (d.redondant) document.getElementById('f_redondant').value = d.redondant;
+      if (d.actionCorrective) document.getElementById('f_actionCorrective').value = d.actionCorrective;
+      if (d.efficacite) document.getElementById('f_efficacite').value = d.efficacite;
+    }, 80);
+
+  } else {
+    // Déclarant : peut modifier ses propres champs
+    document.getElementById('formTitle').textContent = `Modifier — ${id}`;
+    setTimeout(() => {
+      document.getElementById('f_declarant').value = d.declarant || currentUser || '';
+      document.getElementById('f_date').value = d.date || '';
+      document.getElementById('f_description').value = d.description || '';
+
+      selectedCauses = [...(d.causes||[])];
+      document.querySelectorAll('.cause-item').forEach(el => {
+        const lbl = el.querySelector('.cause-label').textContent.replace(/^.\s/,'');
+        const match = selectedCauses.some(c => lbl.includes(c.replace(/'/g,"'")));
+        el.classList.toggle('selected', match);
+      });
+
+      document.getElementById('f_ot').value = d.ot || '';
+      onOTChange();
+      if (d.processus?.[0]) {
+        document.getElementById('f_processus1').value = d.processus[0];
+        checkProcessus2();
+        if (d.processus[1]) document.getElementById('f_processus2').value = d.processus[1];
+      }
+      if (d.fournisseur) document.getElementById('f_fournisseur').value = d.fournisseur;
+      document.getElementById('f_immediat').checked = d.immediat || false;
+      onImmediatChange();
+      if (d.immediat && d.resolution) document.getElementById('f_resolution').value = d.resolution;
+    }, 80);
+  }
+}
+
+async function deleteItem(id) {
+  if (currentRole !== 'direction') { showToast('Action réservée à la direction', 'error'); return; }
+  if (!confirm(`Supprimer définitivement la fiche ${id} ? Cette action est irréversible.`)) return;
+  try {
+    await deleteEntry(id);
+    closeModal();
+    await renderStats(); await renderTable(); await renderAlerts();
+    showToast(`Fiche ${id} supprimée`, 'error');
+  } catch(e) { showToast('Erreur : ' + e.message, 'error'); }
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════
+// ANALYSE
+// ══════════════════════════════════════════════
+async function renderAnalyse() {
+  const annee = document.getElementById('analyseAnnee')?.value || 'all';
+  let data = await loadData();
+  if (annee !== 'all') data = data.filter(d => d.date && d.date.startsWith(annee));
+
+  const total = data.length || 1;
+  const clos = data.filter(d => d.statut === 'Clos').length;
+  const redondants = data.filter(d => d.redondant === 'Oui').length;
+  const avecEfficacite = data.filter(d => d.efficacite && d.efficacite.trim().length > 5).length;
+  const avecAction = data.filter(d => d.actionCorrective && d.actionCorrective.trim().length > 5).length;
+  const avecGravite = data.filter(d => d.gravite).length;
+  const tauxCompl = data.length ? Math.round((avecGravite + avecAction) / (data.length * 2) * 100) : 0;
+  const tauxEff = clos ? Math.round(avecEfficacite / clos * 100) : 0;
+
+  document.getElementById('analyseStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${data.length}</div><div class="stat-label">Fiches analysées</div></div>
+    <div class="stat-card vert"><div class="stat-num">${Math.round(clos/(data.length||1)*100)}%</div><div class="stat-label">Taux de résolution</div></div>
+    <div class="stat-card orange"><div class="stat-num">${Math.round(redondants/(data.length||1)*100)}%</div><div class="stat-label">Taux de redondance</div></div>
+    <div class="stat-card bleu"><div class="stat-num">${tauxCompl}%</div><div class="stat-label">Complétude des fiches</div><div class="stat-sub">gravité + action renseignées</div></div>
+    <div class="stat-card bleu"><div class="stat-num">${tauxEff}%</div><div class="stat-label">Efficacité renseignée</div><div class="stat-sub">fiches closes avec retour</div></div>
+  `;
+
+  // Causes
+  renderBarChart('chartCauses', CAUSES_LIST.map(c => ({
+    label: c.replace("Main d'œuvre","Main d'œuvre"), // keep as-is
+    count: data.filter(d => (d.causes||[]).includes(c)).length
+  })), 'or');
+
+  // Processus
+  renderBarChart('chartProcessus', PROCESSUS_LIST.map(p => ({
+    label: p, count: data.filter(d => (d.processus||[]).includes(p)).length
+  })).filter(x=>x.count>0), 'bleu');
+
+  // Gravité
+  renderBarChart('chartGravite', [
+    {label:'Grave', count:data.filter(d=>d.gravite==='Grave').length, cls:'rouge'},
+    {label:'Modéré', count:data.filter(d=>d.gravite==='Modéré').length, cls:'orange'},
+    {label:'Mineur', count:data.filter(d=>d.gravite==='Mineur').length, cls:'bleu'},
+    {label:'Non qualifié', count:data.filter(d=>!d.gravite).length, cls:''},
+  ], 'rouge');
+
+  // Statut
+  renderBarChart('chartStatut', [
+    {label:'Ouvert', count:data.filter(d=>d.statut==='Ouvert').length, cls:'rouge'},
+    {label:'En cours', count:data.filter(d=>d.statut==='En cours').length, cls:'orange'},
+    {label:'Clos', count:data.filter(d=>d.statut==='Clos').length, cls:'vert'},
+  ], 'vert');
+
+  // Mensuel
+  renderMensuel(data);
+}
+
+function renderBarChart(containerId, items, defaultCls) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const max = Math.max(...items.map(i=>i.count), 1);
+  container.innerHTML = items.map(item => `
+    <div class="chart-bar-row">
+      <div class="chart-bar-label">${item.label}</div>
+      <div class="chart-bar-track">
+        <div class="chart-bar-fill ${item.cls||defaultCls}" style="width:${Math.round(item.count/max*100)}%"></div>
+      </div>
+      <div class="chart-bar-count">${item.count}</div>
+    </div>`).join('');
+}
+
+function renderMensuel(data) {
+  const mois = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  const counts = Array(12).fill(0);
+  data.forEach(d => { if (d.date) counts[parseInt(d.date.split('-')[1])-1]++; });
+  const max = Math.max(...counts, 1);
+  document.getElementById('chartMensuel').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:120px;padding-bottom:24px;position:relative;">
+      ${counts.map((c,i) => `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+          <div style="font-size:11px;color:var(--brun-mid);font-weight:500;">${c||''}</div>
+          <div style="width:100%;background:var(--or);border-radius:3px 3px 0 0;height:${Math.round(c/max*80)}px;min-height:${c?3:0}px;transition:height 0.4s;"></div>
+          <div style="font-size:10px;color:var(--gris);position:absolute;bottom:0;">${mois[i]}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ══════════════════════════════════════════════
+// EXPORT CSV
+// ══════════════════════════════════════════════
+async function exportCSV() {
+  const data = await getFiltered();
+  const cols = ['id','date','declarant','causes','ot','processus','fournisseur','description','immediat','resolution','gravite','statut','redondant','actionCorrective','efficacite','dateSaisie'];
+  const hdrs = ['N°','Date','Déclarant','Cause(s)','Dépend OT','Processus','Fournisseur','Description','Résolution immédiate','Comment résolu','Gravité','Statut','Redondant','Action corrective','Efficacité','Date saisie'];
+  const rows = [hdrs.join(';'), ...data.map(d => cols.map(c => {
+    let v = d[c];
+    if (Array.isArray(v)) v = v.join(' | ');
+    if (typeof v === 'boolean') v = v ? 'Oui' : 'Non';
+    return '"'+(String(v||'')).replace(/"/g,'""')+'"';
+  }).join(';'))];
+  const blob = new Blob(['\uFEFF'+rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `dysfonctionnements_OTSPN_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast('Export CSV généré', 'success');
+}
+
+// ══════════════════════════════════════════════
+// UTILITAIRES
+// ══════════════════════════════════════════════
+function fmtDate(d) {
+  if (!d) return '—';
+  const p = d.split('-');
+  return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d;
+}
+
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type==='success'?'✅ ':'⚠️ ') + msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Init sort indicator
+document.getElementById('th-date')?.classList.add('sort-desc');
+
+// ══════════════════════════════════════════════
+// MODULE 2 — ACTIONS RÉCURRENTES
+// ══════════════════════════════════════════════
+
+const FREQUENCES_JOURS = {
+  'Hebdomadaire': 7, 'Mensuelle': 30, 'Trimestrielle': 91,
+  'Semestrielle': 182, 'Annuelle': 365, 'Biennale': 730,
+  'Triennale': 1095, 'Quinquennale': 1825, 'Ponctuelle': 0
+};
+
+let _actionsCache = null;
+let _realisationsCache = null;
+let _usersCache = null;
+let _currentActionId = null;
+let _currentRealId = null;
+let _editActionId = null;
+
+// ── Chargement données ──
+async function loadActions(force = false) {
+  if (!force && _actionsCache) return _actionsCache;
+  const resp = await fetch(
+    `${SB.url}/rest/v1/actions_recurrentes?order=action.asc`,
+    { headers: sbHeaders() }
+  );
+  _actionsCache = await resp.json();
+  return _actionsCache;
+}
+
+async function loadRealisations(force = false) {
+  if (!force && _realisationsCache) return _realisationsCache;
+  const resp = await fetch(
+    `${SB.url}/rest/v1/realisations?order=date_prevue.asc`,
+    { headers: sbHeaders() }
+  );
+  _realisationsCache = await resp.json();
+  return _realisationsCache;
+}
+
+async function loadUsers(force = false) {
+  if (!force && _usersCache) return _usersCache;
+  const resp = await fetch(
+    `${SB.url}/rest/v1/utilisateurs?select=id,nom,role&order=nom.asc`,
+    { headers: sbHeaders() }
+  );
+  _usersCache = await resp.json();
+  return _usersCache;
+}
+
+// Dernière réalisation par action
+function getLastReal(reals, actionId) {
+  return reals.filter(r => r.action_id === actionId && r.date_reelle)
+    .sort((a,b) => b.date_reelle.localeCompare(a.date_reelle))[0] || null;
+}
+
+// Prochaine réalisation par action
+function getNextReal(reals, actionId) {
+  const today = new Date().toISOString().split('T')[0];
+  return reals.filter(r => r.action_id === actionId && !r.date_reelle && r.date_prevue >= today)
+    .sort((a,b) => a.date_prevue.localeCompare(b.date_prevue))[0] || null;
+}
+
+// Occurrence en retard
+function getOverdueReal(reals, actionId) {
+  const today = new Date().toISOString().split('T')[0];
+  return reals.filter(r => r.action_id === actionId && !r.date_reelle && r.date_prevue < today)
+    .sort((a,b) => a.date_prevue.localeCompare(b.date_prevue))[0] || null;
+}
+
+function getUserName(users, id) {
+  if (!id) return '—';
+  return users.find(u => u.id === id)?.nom || '—';
+}
+
+function daysDiff(date1, date2) {
+  return Math.round((new Date(date2) - new Date(date1)) / 86400000);
+}
+
+// ── Navigation sous-onglets ──
+function switchActionsTab(tab, btn) {
+  ['echeances','parprocessus','toutesactions'].forEach(t => {
+    document.getElementById('view-' + t).style.display = 'none';
+    document.getElementById('tab-' + t)?.classList.remove('active');
+  });
+  document.getElementById('view-' + tab).style.display = 'block';
+  if (btn) btn.classList.add('active');
+
+  if (tab === 'echeances') renderActionsEcheances();
+  if (tab === 'parprocessus') renderParProcessus();
+  if (tab === 'toutesactions') renderToutesActions();
+}
+
+// ── Page actions principale ──
+async function initActionsPage() {
+  await loadActions(true);
+  await loadRealisations(true);
+  await loadUsers(true);
+  await populateUserSelects();
+  renderActionsStats();
+  renderActionsEcheances();
+  renderActionsAlerts();
+
+  // Accès bouton nouvelle action : pilotes et direction uniquement
+  const canCreate = currentRole === 'pilote' || currentRole === 'direction';
+  document.getElementById('btnNouvelleAction').style.display = canCreate ? '' : 'none';
+}
+
+async function populateUserSelects() {
+  const users = await loadUsers();
+  ['af_responsable', 'af_intervenant'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const isIntervenant = id === 'af_intervenant';
+    const currentVal = sel.value;
+    sel.innerHTML = isIntervenant
+      ? '<option value="">— Aucun —</option>'
+      : '<option value="">— Sélectionner —</option>';
+    users.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.id;
+      opt.textContent = `${u.nom} (${u.role})`;
+      sel.appendChild(opt);
+    });
+    if (currentVal) sel.value = currentVal;
+  });
+}
+
+function validateRespIntervenant() {
+  const r = document.getElementById('af_responsable')?.value;
+  const i = document.getElementById('af_intervenant')?.value;
+  const err = document.getElementById('e_af_responsable');
+  if (r && i && r === i) {
+    err.style.display = 'block';
+    return false;
+  }
+  err.style.display = 'none';
+  return true;
+}
+
+// ── Stats ──
+async function renderActionsStats() {
+  const actions = await loadActions();
+  const reals = await loadRealisations();
+  const today = new Date().toISOString().split('T')[0];
+  const in30 = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+
+  const retard = actions.filter(a => a.actif && getOverdueReal(reals, a.id)).length;
+  const avenir = actions.filter(a => {
+    const n = getNextReal(reals, a.id);
+    return a.actif && n && n.date_prevue <= in30;
+  }).length;
+  const total = actions.filter(a => a.actif).length;
+
+  document.getElementById('actionsStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Actions actives</div></div>
+    <div class="stat-card rouge"><div class="stat-num">${retard}</div><div class="stat-label">En retard</div></div>
+    <div class="stat-card orange"><div class="stat-num">${avenir}</div><div class="stat-label">Échéances 30 jours</div></div>
+  `;
+}
+
+function renderActionsAlerts() {
+  // Alertes dans la barre du haut
+}
+
+// ── Vue Échéances ──
+async function renderActionsEcheances() {
+  const actions = await loadActions();
+  const reals = await loadRealisations();
+  const users = await loadUsers();
+  const today = new Date().toISOString().split('T')[0];
+  const in30 = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+
+  // En retard
+  const retards = actions.filter(a => a.actif && getOverdueReal(reals, a.id));
+  const tbodyR = document.getElementById('tbodyRetard');
+  document.getElementById('emptyRetard').style.display = retards.length ? 'none' : 'block';
+  tbodyR.innerHTML = retards.map(a => {
+    const r = getOverdueReal(reals, a.id);
+    const jours = daysDiff(r.date_prevue, today);
+    return `<tr>
+      <td><strong style="font-size:13px">${a.action}</strong></td>
+      <td style="font-size:12px">${a.processus}</td>
+      <td style="font-size:12px">${getUserName(users, a.responsable_id)}</td>
+      <td style="color:var(--rouge);font-weight:500">${fmtDate(r.date_prevue)}</td>
+      <td><span class="badge b-grave">${jours}j de retard</span></td>
+      <td><div style="display:flex;gap:5px;">
+        <button class="btn btn-primary btn-xs" onclick="openRealForm('${a.id}','${r.id}')">✅ Réaliser</button>
+        <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  // À venir
+  const avenir = actions.filter(a => {
+    const n = getNextReal(reals, a.id);
+    return a.actif && n && n.date_prevue <= in30 && n.date_prevue >= today;
+  }).sort((a, b) => {
+    const na = getNextReal(reals, a.id);
+    const nb = getNextReal(reals, b.id);
+    return na.date_prevue.localeCompare(nb.date_prevue);
+  });
+
+  const tbodyA = document.getElementById('tbodyAVenir');
+  document.getElementById('emptyAVenir').style.display = avenir.length ? 'none' : 'block';
+  tbodyA.innerHTML = avenir.map(a => {
+    const r = getNextReal(reals, a.id);
+    const jours = daysDiff(today, r.date_prevue);
+    const urgCls = jours <= 7 ? 'b-grave' : jours <= 14 ? 'b-modere' : 'b-mineur';
+    return `<tr>
+      <td><strong style="font-size:13px">${a.action}</strong></td>
+      <td style="font-size:12px">${a.processus}</td>
+      <td style="font-size:12px">${getUserName(users, a.responsable_id)}</td>
+      <td style="font-weight:500">${fmtDate(r.date_prevue)}</td>
+      <td><span class="badge ${urgCls}">dans ${jours}j</span></td>
+      <td><div style="display:flex;gap:5px;">
+        <button class="btn btn-primary btn-xs" onclick="openRealForm('${a.id}','${r.id}')">✅ Réaliser</button>
+        <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Vue Par processus ──
+async function renderParProcessus() {
+  const actions = await loadActions();
+  const reals = await loadRealisations();
+  const users = await loadUsers();
+  const filterProc = document.getElementById('filterProcessusActions')?.value || '';
+  const filterEtat = document.getElementById('filterEtatActions')?.value || '';
+  const today = new Date().toISOString().split('T')[0];
+
+  let filtered = actions.filter(a => a.actif);
+  if (filterProc) filtered = filtered.filter(a => a.processus === filterProc);
+
+  // Grouper par processus
+  const byProc = {};
+  filtered.forEach(a => {
+    if (!byProc[a.processus]) byProc[a.processus] = [];
+    const next = getNextReal(reals, a.id) || getOverdueReal(reals, a.id);
+    const etat = next ? (next.date_prevue < today ? 'En retard' : 'Planifié') : 'À planifier';
+    if (filterEtat && etat !== filterEtat) return;
+    byProc[a.processus].push({ a, next, etat });
+  });
+
+  const container = document.getElementById('actionsParProcessusContainer');
+  container.innerHTML = Object.keys(byProc).sort().map(proc => {
+    const items = byProc[proc];
+    if (!items.length) return '';
+    return `<div class="card" style="margin-bottom:16px;">
+      <div class="card-title" style="margin-bottom:14px;">
+        <div class="card-title-icon">🗂</div>${proc}
+        <span style="font-size:12px;color:var(--gris);margin-left:8px;">${items.length} action${items.length>1?'s':''}</span>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Action</th><th>Fréquence</th><th>Responsable</th><th>Prochaine</th><th>État</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${items.map(({a, next, etat}) => {
+            const eCls = etat==='En retard'?'b-grave':etat==='Planifié'?'b-encours':'b-mineur';
+            return `<tr>
+              <td>${a.action}</td>
+              <td style="font-size:12px">${a.frequence}</td>
+              <td style="font-size:12px">${getUserName(users, a.responsable_id)}</td>
+              <td style="font-size:12px">${next ? fmtDate(next.date_prevue) : '—'}</td>
+              <td><span class="badge ${eCls}">${etat}</span></td>
+              <td><div style="display:flex;gap:5px;">
+                ${next?`<button class="btn btn-primary btn-xs" onclick="openRealForm('${a.id}','${next.id}')">✅</button>`:''}
+                <button class="btn btn-secondary btn-xs" onclick="openActionForm('${a.id}')">✏️</button>
+                <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
+              </div></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+  }).join('');
+}
+
+// ── Vue Toutes les actions ──
+async function renderToutesActions() {
+  const actions = await loadActions();
+  const reals = await loadRealisations();
+  const users = await loadUsers();
+  const search = document.getElementById('searchActions')?.value.toLowerCase() || '';
+  const filterTheme = document.getElementById('filterTheme')?.value || '';
+  const filterSite = document.getElementById('filterSite')?.value || '';
+  const showInactif = document.getElementById('showInactif')?.checked || false;
+  const today = new Date().toISOString().split('T')[0];
+
+  let filtered = actions.filter(a => {
+    if (!showInactif && !a.actif) return false;
+    if (filterTheme && a.theme !== filterTheme) return false;
+    if (filterSite && a.site !== filterSite) return false;
+    if (search && ![a.action, a.processus, a.theme, a.prestataire].join(' ').toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('tbodyToutesActions');
+  document.getElementById('emptyToutesActions').style.display = filtered.length ? 'none' : 'block';
+
+  const canEdit = currentRole === 'pilote' || currentRole === 'direction';
+
+  tbody.innerHTML = filtered.map(a => {
+    const next = getNextReal(reals, a.id) || getOverdueReal(reals, a.id);
+    const etat = next ? (next.date_prevue < today ? 'En retard' : 'Planifié') : 'À planifier';
+    const eCls = etat==='En retard'?'b-grave':etat==='Planifié'?'b-encours':'b-mineur';
+    return `<tr style="${!a.actif?'opacity:0.5;':''}">
+      <td><span title="${a.commentaires||''}">${a.action}${!a.actif?' <span style="font-size:11px;color:var(--gris)">(archivée)</span>':''}</span></td>
+      <td style="font-size:12px">${a.theme}</td>
+      <td style="font-size:12px">${a.processus}</td>
+      <td style="font-size:12px">${a.frequence}</td>
+      <td style="font-size:12px">${getUserName(users, a.responsable_id)}</td>
+      <td style="font-size:12px">${a.site||'—'}</td>
+      <td style="font-size:12px">${next ? fmtDate(next.date_prevue) : '—'}</td>
+      <td><span class="badge ${eCls}">${etat}</span></td>
+      <td><div style="display:flex;gap:5px;">
+        ${canEdit?`<button class="btn btn-primary btn-xs" onclick="openActionForm('${a.id}')">✏️</button>`:''}
+        <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
+        ${currentRole==='direction'?`<button class="btn btn-danger btn-xs" onclick="toggleArchiveAction('${a.id}',${a.actif})">${a.actif?'📦':'♻️'}</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Formulaire Action ──
+async function openActionForm(actionId = null) {
+  _editActionId = actionId;
+  await populateUserSelects();
+  const modal = document.getElementById('modalActionBg');
+  const title = document.getElementById('modalActionTitle');
+
+  if (actionId) {
+    title.textContent = 'Modifier l\'action';
+    const actions = await loadActions();
+    const a = actions.find(x => x.id === actionId);
+    if (!a) return;
+    document.getElementById('af_theme').value = a.theme || '';
+    document.getElementById('af_processus').value = a.processus || '';
+    document.getElementById('af_action').value = a.action || '';
+    document.getElementById('af_reference').value = a.reference || '';
+    document.getElementById('af_prestataire').value = a.prestataire || '';
+    document.getElementById('af_responsable').value = a.responsable_id || '';
+    document.getElementById('af_intervenant').value = a.intervenant_id || '';
+    document.getElementById('af_site').value = a.site || '';
+    document.getElementById('af_frequence').value = a.frequence || '';
+    document.getElementById('af_frequence_jours').value = a.frequence_jours || '';
+    document.getElementById('af_commentaires').value = a.commentaires || '';
+
+    // Dernière et prochaine réalisation
+    const reals = await loadRealisations();
+    const last = getLastReal(reals, actionId);
+    const next = getNextReal(reals, actionId) || getOverdueReal(reals, actionId);
+    document.getElementById('af_derniere_real').value = last?.date_reelle || '';
+    document.getElementById('af_prochaine_real').value = next?.date_prevue || '';
+  } else {
+    title.textContent = 'Nouvelle action récurrente';
+    document.getElementById('af_theme').value = '';
+    document.getElementById('af_processus').value = '';
+    document.getElementById('af_action').value = '';
+    document.getElementById('af_reference').value = '';
+    document.getElementById('af_prestataire').value = '';
+    document.getElementById('af_responsable').value = '';
+    document.getElementById('af_intervenant').value = '';
+    document.getElementById('af_site').value = '';
+    document.getElementById('af_frequence').value = '';
+    document.getElementById('af_frequence_jours').value = '';
+    document.getElementById('af_commentaires').value = '';
+    document.getElementById('af_derniere_real').value = '';
+    document.getElementById('af_prochaine_real').value = '';
+  }
+  modal.classList.add('open');
+}
+
+function closeActionForm() {
+  document.getElementById('modalActionBg').classList.remove('open');
+  _editActionId = null;
+}
+
+function onFrequenceChange() {
+  const sel = document.getElementById('af_frequence');
+  const opt = sel.options[sel.selectedIndex];
+  const jours = opt.dataset.jours || FREQUENCES_JOURS[opt.value] || '';
+  document.getElementById('af_frequence_jours').value = jours;
+  // Recalculer prochaine si dernière renseignée
+  const derniere = document.getElementById('af_derniere_real').value;
+  if (derniere && jours > 0) {
+    const d = new Date(derniere);
+    d.setDate(d.getDate() + parseInt(jours));
+    document.getElementById('af_prochaine_real').value = d.toISOString().split('T')[0];
+  }
+}
+
+async function saveAction() {
+  if (!validateRespIntervenant()) return;
+  const btn = document.getElementById('btnSaveAction');
+
+  const theme = document.getElementById('af_theme').value;
+  const action = document.getElementById('af_action').value.trim();
+  const processus = document.getElementById('af_processus').value;
+  const frequence = document.getElementById('af_frequence').value;
+  if (!theme || !action || !processus || !frequence) {
+    showToast('Remplissez les champs obligatoires', 'error'); return;
+  }
+
+  const responsable_id = document.getElementById('af_responsable').value || null;
+  const intervenant_id = document.getElementById('af_intervenant').value || null;
+  if (!responsable_id) { showToast('Sélectionnez un responsable', 'error'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ Enregistrement…';
+
+  try {
+    const row = {
+      theme,
+      action,
+      processus,
+      reference: document.getElementById('af_reference').value || null,
+      prestataire: document.getElementById('af_prestataire').value || null,
+      responsable_id,
+      intervenant_id,
+      site: document.getElementById('af_site').value || null,
+      frequence,
+      frequence_jours: parseInt(document.getElementById('af_frequence_jours').value) || 0,
+      commentaires: document.getElementById('af_commentaires').value || null,
+      cree_par: currentUserId
+    };
+
+    let actionId = _editActionId;
+
+    if (_editActionId) {
+      // Mise à jour
+      const resp = await fetch(`${SB.url}/rest/v1/actions_recurrentes?id=eq.${_editActionId}`, {
+        method: 'PATCH',
+        headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
+        body: JSON.stringify(row)
+      });
+      if (!resp.ok) throw new Error(await resp.text());
+    } else {
+      // Création
+      const resp = await fetch(`${SB.url}/rest/v1/actions_recurrentes`, {
+        method: 'POST',
+        headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
+        body: JSON.stringify({ ...row, actif: true })
+      });
+      if (!resp.ok) throw new Error(await resp.text());
+      const created = await resp.json();
+      actionId = created[0].id;
+
+      // Créer la première occurrence si prochaine réalisation renseignée
+      const prochaineReal = document.getElementById('af_prochaine_real').value;
+      if (prochaineReal) {
+        await fetch(`${SB.url}/rest/v1/realisations`, {
+          method: 'POST',
+          headers: sbHeaders(),
+          body: JSON.stringify({ action_id: actionId, date_prevue: prochaineReal, etat: 'Planifié' })
+        });
+      }
+    }
+
+    _actionsCache = null; _realisationsCache = null;
+    closeActionForm();
+    await initActionsPage();
+    showToast(_editActionId ? 'Action mise à jour' : 'Action créée', 'success');
+  } catch(e) {
+    showToast('Erreur : ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '✅ Enregistrer';
+  }
+}
+
+async function toggleArchiveAction(id, actif) {
+  if (!confirm(actif ? 'Archiver cette action ?' : 'Réactiver cette action ?')) return;
+  await fetch(`${SB.url}/rest/v1/actions_recurrentes?id=eq.${id}`, {
+    method: 'PATCH', headers: sbHeaders(),
+    body: JSON.stringify({ actif: !actif })
+  });
+  _actionsCache = null;
+  await renderToutesActions();
+  showToast(actif ? 'Action archivée' : 'Action réactivée', 'success');
+}
+
+// ── Formulaire Réalisation ──
+async function openRealForm(actionId, realId) {
+  _currentActionId = actionId;
+  _currentRealId = realId;
+  const actions = await loadActions();
+  const reals = await loadRealisations();
+  const a = actions.find(x => x.id === actionId);
+  const r = reals.find(x => x.id === realId);
+
+  document.getElementById('realActionContext').innerHTML =
+    `<strong>${a?.action}</strong><br><span style="font-size:12px">${a?.processus} · ${a?.frequence} · Prévue le ${fmtDate(r?.date_prevue)}</span>`;
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('rf_date_reelle').value = today;
+  document.getElementById('rf_etat').value = r?.date_prevue <= today ? 'Réalisé dans les délais' : 'Réalisé en retard';
+  document.getElementById('rf_commentaire').value = '';
+
+  // Calculer prochaine date
+  if (a?.frequence_jours > 0) {
+    const d = new Date(today);
+    d.setDate(d.getDate() + a.frequence_jours);
+    document.getElementById('rf_prochaine').value = d.toISOString().split('T')[0];
+  } else {
+    document.getElementById('rf_prochaine').value = '';
+  }
+
+  document.getElementById('modalRealBg').classList.add('open');
+}
+
+function closeRealForm() {
+  document.getElementById('modalRealBg').classList.remove('open');
+}
+
+async function saveRealisation() {
+  const btn = document.getElementById('btnSaveReal');
+  const dateReelle = document.getElementById('rf_date_reelle').value;
+  const etat = document.getElementById('rf_etat').value;
+  const commentaire = document.getElementById('rf_commentaire').value;
+  const prochaine = document.getElementById('rf_prochaine').value;
+
+  if (!dateReelle) { showToast('Saisissez la date de réalisation', 'error'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ Enregistrement…';
+
+  try {
+    // 1. Mettre à jour l'occurrence courante
+    await fetch(`${SB.url}/rest/v1/realisations?id=eq.${_currentRealId}`, {
+      method: 'PATCH', headers: sbHeaders(),
+      body: JSON.stringify({ date_reelle: dateReelle, etat, commentaire: commentaire || null, realise_par: currentUserId })
+    });
+
+    // 2. Créer automatiquement la prochaine occurrence
+    if (prochaine) {
+      await fetch(`${SB.url}/rest/v1/realisations`, {
+        method: 'POST', headers: sbHeaders(),
+        body: JSON.stringify({ action_id: _currentActionId, date_prevue: prochaine, etat: 'Planifié' })
+      });
+    }
+
+    _realisationsCache = null;
+    closeRealForm();
+    await initActionsPage();
+    showToast('Réalisation enregistrée — prochaine occurrence créée', 'success');
+  } catch(e) {
+    showToast('Erreur : ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '✅ Confirmer la réalisation';
+  }
+}
+
+// ── Historique ──
+async function openHistorique(actionId) {
+  const actions = await loadActions();
+  const reals = await loadRealisations();
+  const users = await loadUsers();
+  const a = actions.find(x => x.id === actionId);
+  const hist = reals.filter(r => r.action_id === actionId)
+    .sort((a,b) => (b.date_prevue||'').localeCompare(a.date_prevue||''));
+
+  document.getElementById('modalHistContent').innerHTML = `
+    <div class="modal-head">
+      <h3>Historique — ${a?.action}</h3>
+      <button class="modal-close" onclick="closeHistModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12.5px;color:var(--gris);margin-bottom:14px;">${a?.processus} · ${a?.frequence} · ${a?.site}</p>
+      ${hist.length ? `
+      <div class="table-wrap"><table>
+        <thead><tr><th>Date prévue</th><th>Date réelle</th><th>État</th><th>Réalisé par</th><th>Commentaire</th></tr></thead>
+        <tbody>
+          ${hist.map(r => {
+            const eCls = r.etat==='Réalisé dans les délais'?'b-clos':r.etat==='En retard'||r.etat==='Réalisé en retard'?'b-ouvert':'b-encours';
+            return `<tr>
+              <td>${fmtDate(r.date_prevue)}</td>
+              <td>${r.date_reelle ? fmtDate(r.date_reelle) : '<span style="color:var(--gris)">—</span>'}</td>
+              <td><span class="badge ${eCls}" style="font-size:11px">${r.etat||'—'}</span></td>
+              <td style="font-size:12px">${getUserName(users, r.realise_par)}</td>
+              <td style="font-size:12px;max-width:200px">${r.commentaire||'—'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table></div>` : '<p style="color:var(--gris);text-align:center;padding:20px">Aucune réalisation enregistrée</p>'}
+      <div style="text-align:right;margin-top:16px;padding-top:12px;border-top:1px solid var(--gris-light);">
+        <button class="btn btn-secondary btn-sm" onclick="closeHistModal()">Fermer</button>
+      </div>
+    </div>`;
+  document.getElementById('modalHistBg').classList.add('open');
+}
+
+function closeHistModal() {
+  document.getElementById('modalHistBg').classList.remove('open');
+}
+</script>
+</body>
+</html>
