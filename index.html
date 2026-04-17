@@ -2372,7 +2372,7 @@ async function loadRealisations(force = false) {
 async function loadUsers(force = false) {
   if (!force && _usersCache) return _usersCache;
   const resp = await fetch(
-    `${SB.url}/rest/v1/utilisateurs?select=id,nom,role&order=nom.asc`,
+    `${SB.url}/rest/v1/utilisateurs?select=id,nom,role,fonction&order=nom.asc`,
     { headers: sbHeaders() }
   );
   _usersCache = await resp.json();
@@ -2450,7 +2450,7 @@ async function populateUserSelects() {
     users.forEach(u => {
       const opt = document.createElement('option');
       opt.value = u.id;
-      opt.textContent = `${u.nom} (${u.role})`;
+      opt.textContent = u.fonction ? `${u.nom} — ${u.fonction}` : u.nom;
       sel.appendChild(opt);
     });
     if (currentVal) sel.value = currentVal;
