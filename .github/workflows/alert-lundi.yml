@@ -1,0 +1,15 @@
+name: Alerte actions récurrentes
+on:
+  schedule:
+    - cron: '0 7 * * 1'  # Lundi 8h heure française (7h UTC)
+  workflow_dispatch:      # Permet de déclencher manuellement pour tester
+
+jobs:
+  send-alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déclencher l'alerte
+        run: |
+          curl -X POST https://sikunniqcurvpemdkvfa.supabase.co/functions/v1/alert-actions-recurrentes \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa3VubmlxY3VydnBlbWRrdmZhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDk5NTA4NywiZXhwIjoyMDkwNTcxMDg3fQ.yhtw8Gkb2emZIIc835eSNb37TObYnjpK3sJMQF8Mefw" \
+            -H "Content-Type: application/json"
