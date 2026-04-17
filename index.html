@@ -2821,7 +2821,16 @@ async function saveAction() {
 
     _actionsCache = null; _realisationsCache = null;
     closeActionForm();
-    await initActionsPage();
+
+    // Rester sur le sous-onglet actif
+    const activeTab = document.querySelector('.tab.active')?.id?.replace('tab-','') || 'toutesactions';
+    await loadActions(true);
+    await loadRealisations(true);
+    if (activeTab === 'echeances') await renderActionsEcheances();
+    else if (activeTab === 'parprocessus') await renderParProcessus();
+    else await renderToutesActions();
+    await renderActionsStats();
+
     showToast(_editActionId ? 'Action mise à jour' : 'Action créée', 'success');
   } catch(e) {
     showToast('Erreur : ' + e.message, 'error');
@@ -2837,7 +2846,9 @@ async function toggleArchiveAction(id, actif) {
     body: JSON.stringify({ actif: !actif })
   });
   _actionsCache = null;
+  await loadActions(true);
   await renderToutesActions();
+  await renderActionsStats();
   showToast(actif ? 'Action archivée' : 'Action réactivée', 'success');
 }
 
@@ -2923,7 +2934,15 @@ async function saveRealisation() {
 
     _realisationsCache = null;
     closeRealForm();
-    await initActionsPage();
+
+    // Rester sur le sous-onglet actif
+    const activeTab = document.querySelector('.tab.active')?.id?.replace('tab-','') || 'toutesactions';
+    await loadRealisations(true);
+    if (activeTab === 'echeances') await renderActionsEcheances();
+    else if (activeTab === 'parprocessus') await renderParProcessus();
+    else await renderToutesActions();
+    await renderActionsStats();
+
     showToast(isRealise ? 'Réalisation enregistrée' : 'État mis à jour', 'success');
   } catch(e) {
     showToast('Erreur : ' + e.message, 'error');
