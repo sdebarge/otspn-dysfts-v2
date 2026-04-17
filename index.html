@@ -1729,9 +1729,10 @@ function initForm() {
 
 function onOTChange() {
   const val = document.getElementById('f_ot').value;
-  document.getElementById('cond_processus').style.display = val === 'Oui' ? 'flex' : 'none';
+  // Processus toujours affiché quand OT est sélectionné (interne OU externe)
+  document.getElementById('cond_processus').style.display = val ? 'flex' : 'none';
   document.getElementById('cond_fournisseur').style.display = val === 'Non' ? 'flex' : 'none';
-  document.getElementById('cond_processus').className = val === 'Oui' ? 'form-group visible' : 'form-group conditional';
+  document.getElementById('cond_processus').className = val ? 'form-group visible' : 'form-group conditional';
   document.getElementById('cond_fournisseur').className = val === 'Non' ? 'form-group visible' : 'form-group conditional';
 }
 
@@ -1811,7 +1812,8 @@ document.getElementById('dysfForm').addEventListener('submit', async function(e)
       } else { errCause.style.display = 'none'; }
 
       const ot = document.getElementById('f_ot').value;
-      if (ot === 'Oui') valid &= validateField('f_processus1','e_processus', v => v !== '');
+      // Processus obligatoire dans tous les cas (interne ET externe)
+      valid &= validateField('f_processus1','e_processus', v => v !== '');
       if (ot === 'Non') valid &= validateField('f_fournisseur','e_fournisseur', v => v.trim().length > 0);
 
       const imm = document.getElementById('f_immediat').checked;
