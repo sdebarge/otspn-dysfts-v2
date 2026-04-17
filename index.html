@@ -1283,8 +1283,11 @@ input:checked + .toggle-slider::before { transform: translateX(18px); }
         <div class="form-group">
           <label class="form-label required">État</label>
           <select class="form-select" id="rf_etat">
+            <option value="Planifié">Planifié</option>
             <option value="Réalisé dans les délais">Réalisé dans les délais</option>
             <option value="Réalisé en retard">Réalisé en retard</option>
+            <option value="En retard">En retard</option>
+            <option value="À planifier">À planifier</option>
           </select>
         </div>
         <div class="form-group full">
@@ -2737,7 +2740,7 @@ async function saveAction() {
   btn.disabled = true; btn.textContent = '⏳ Enregistrement…';
 
   try {
-    const row = {
+    const rowBase = {
       theme,
       action,
       processus,
@@ -2749,27 +2752,56 @@ async function saveAction() {
       frequence,
       frequence_jours: parseInt(document.getElementById('af_frequence_jours').value) || 0,
       commentaires: document.getElementById('af_commentaires').value || null,
-      cree_par: currentUserId
     };
 
     let actionId = _editActionId;
 
     if (_editActionId) {
-      // Mise à jour
+      // Mise à jour — sans cree_par
       const resp = await fetch(`${SB.url}/rest/v1/actions_recurrentes?id=eq.${_editActionId}`, {
         method: 'PATCH',
         headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
-        body: JSON.stringify(row)
+        body: JSON.stringify(rowBase)
       });
-      if (!resp.ok) throw new Error(await resp.text());
+      if (!resp.ok) {
+        const errText = await resp.text();
+        console.error('[saveAction PATCH]', errText);
+        throw new Error(errText);
+      }
+
+      // Mettre à jour la prochaine réalisation si modifiée
+      const prochaineReal = document.getElementById('af_prochaine_real').value;
+      if (prochaineReal) {
+        const reals = await loadRealisations(true);
+        const nextReal = getNextReal(reals, _editActionId) || getOverdueReal(reals, _editActionId);
+        if (nextReal) {
+          await fetch(`${SB.url}/rest/v1/realisations?id=eq.${nextReal.id}`, {
+            method: 'PATCH',
+            headers: sbHeaders(),
+            body: JSON.stringify({ date_prevue: prochaineReal })
+          });
+        } else {
+          // Créer une nouvelle occurrence si aucune n'existe
+          await fetch(`${SB.url}/rest/v1/realisations`, {
+            method: 'POST',
+            headers: sbHeaders(),
+            body: JSON.stringify({ action_id: _editActionId, date_prevue: prochaineReal, etat: 'Planifié' })
+          });
+        }
+      }
+
     } else {
-      // Création
+      // Création — avec cree_par
       const resp = await fetch(`${SB.url}/rest/v1/actions_recurrentes`, {
         method: 'POST',
         headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
-        body: JSON.stringify({ ...row, actif: true })
+        body: JSON.stringify({ ...rowBase, actif: true, cree_par: currentUserId })
       });
-      if (!resp.ok) throw new Error(await resp.text());
+      if (!resp.ok) {
+        const errText = await resp.text();
+        console.error('[saveAction POST]', errText);
+        throw new Error(errText);
+      }
       const created = await resp.json();
       actionId = created[0].id;
 
@@ -2819,18 +2851,25 @@ async function openRealForm(actionId, realId) {
     `<strong>${a?.action}</strong><br><span style="font-size:12px">${a?.processus} · ${a?.frequence} · Prévue le ${fmtDate(r?.date_prevue)}</span>`;
 
   const today = new Date().toISOString().split('T')[0];
-  document.getElementById('rf_date_reelle').value = today;
-  document.getElementById('rf_etat').value = r?.date_prevue <= today ? 'Réalisé dans les délais' : 'Réalisé en retard';
-  document.getElementById('rf_commentaire').value = '';
+  // Pré-remplir avec les valeurs existantes si déjà renseignées
+  document.getElementById('rf_date_reelle').value = r?.date_reelle || today;
+  document.getElementById('rf_etat').value = r?.etat || (r?.date_prevue <= today ? 'En retard' : 'Planifié');
+  document.getElementById('rf_commentaire').value = r?.commentaire || '';
 
   // Calculer prochaine date
   if (a?.frequence_jours > 0) {
-    const d = new Date(today);
+    const baseDate = r?.date_reelle || today;
+    const d = new Date(baseDate);
     d.setDate(d.getDate() + a.frequence_jours);
     document.getElementById('rf_prochaine').value = d.toISOString().split('T')[0];
   } else {
     document.getElementById('rf_prochaine').value = '';
   }
+
+  // Masquer le champ "prochaine" si l'état n'est pas une réalisation
+  const etat = document.getElementById('rf_etat').value;
+  const isPlanifie = etat === 'Planifié' || etat === 'En retard' || etat === 'À planifier';
+  document.getElementById('rf_prochaine').closest('.form-group').style.display = isPlanifie ? 'none' : '';
 
   document.getElementById('modalRealBg').classList.add('open');
 }
@@ -2846,29 +2885,43 @@ async function saveRealisation() {
   const commentaire = document.getElementById('rf_commentaire').value;
   const prochaine = document.getElementById('rf_prochaine').value;
 
-  if (!dateReelle) { showToast('Saisissez la date de réalisation', 'error'); return; }
+  const isRealise = etat === 'Réalisé dans les délais' || etat === 'Réalisé en retard';
+
+  if (isRealise && !dateReelle) { showToast('Saisissez la date de réalisation', 'error'); return; }
 
   btn.disabled = true; btn.textContent = '⏳ Enregistrement…';
 
   try {
-    // 1. Mettre à jour l'occurrence courante
+    // Mettre à jour l'occurrence courante
     await fetch(`${SB.url}/rest/v1/realisations?id=eq.${_currentRealId}`, {
       method: 'PATCH', headers: sbHeaders(),
-      body: JSON.stringify({ date_reelle: dateReelle, etat, commentaire: commentaire || null, realise_par: currentUserId })
+      body: JSON.stringify({
+        date_reelle: isRealise ? dateReelle : null,
+        etat,
+        commentaire: commentaire || null,
+        realise_par: isRealise ? currentUserId : null
+      })
     });
 
-    // 2. Créer automatiquement la prochaine occurrence
-    if (prochaine) {
-      await fetch(`${SB.url}/rest/v1/realisations`, {
-        method: 'POST', headers: sbHeaders(),
-        body: JSON.stringify({ action_id: _currentActionId, date_prevue: prochaine, etat: 'Planifié' })
-      });
+    // Créer la prochaine occurrence UNIQUEMENT si réalisée
+    if (isRealise && prochaine) {
+      // Vérifier qu'une occurrence future n'existe pas déjà
+      const reals = await loadRealisations(true);
+      const existingNext = reals.filter(r =>
+        r.action_id === _currentActionId && !r.date_reelle && r.id !== _currentRealId
+      );
+      if (!existingNext.length) {
+        await fetch(`${SB.url}/rest/v1/realisations`, {
+          method: 'POST', headers: sbHeaders(),
+          body: JSON.stringify({ action_id: _currentActionId, date_prevue: prochaine, etat: 'Planifié' })
+        });
+      }
     }
 
     _realisationsCache = null;
     closeRealForm();
     await initActionsPage();
-    showToast('Réalisation enregistrée — prochaine occurrence créée', 'success');
+    showToast(isRealise ? 'Réalisation enregistrée' : 'État mis à jour', 'success');
   } catch(e) {
     showToast('Erreur : ' + e.message, 'error');
   } finally {
@@ -2892,9 +2945,9 @@ async function openHistorique(actionId) {
     </div>
     <div class="modal-body">
       <p style="font-size:12.5px;color:var(--gris);margin-bottom:14px;">${a?.processus} · ${a?.frequence} · ${a?.site}</p>
-      ${hist.length ? `
+          ${hist.length ? `
       <div class="table-wrap"><table>
-        <thead><tr><th>Date prévue</th><th>Date réelle</th><th>État</th><th>Réalisé par</th><th>Commentaire</th></tr></thead>
+        <thead><tr><th>Date prévue</th><th>Date réelle</th><th>État</th><th>Réalisé par</th><th>Commentaire</th><th></th></tr></thead>
         <tbody>
           ${hist.map(r => {
             const eCls = r.etat==='Réalisé dans les délais'?'b-clos':r.etat==='En retard'||r.etat==='Réalisé en retard'?'b-ouvert':'b-encours';
@@ -2904,6 +2957,7 @@ async function openHistorique(actionId) {
               <td><span class="badge ${eCls}" style="font-size:11px">${r.etat||'—'}</span></td>
               <td style="font-size:12px">${getUserName(users, r.realise_par)}</td>
               <td style="font-size:12px;max-width:200px">${r.commentaire||'—'}</td>
+              <td><button class="btn btn-secondary btn-xs" onclick="closeHistModal();openRealForm('${actionId}','${r.id}')">✏️</button></td>
             </tr>`;
           }).join('')}
         </tbody>
