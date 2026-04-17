@@ -2516,8 +2516,8 @@ async function renderActionsEcheances() {
       <td style="color:var(--rouge);font-weight:500">${fmtDate(r.date_prevue)}</td>
       <td><span class="badge b-grave">${jours}j de retard</span></td>
       <td><div style="display:flex;gap:5px;">
-        <button class="btn btn-primary btn-xs" onclick="openRealForm('${a.id}','${r.id}')">✅ Réaliser</button>
-        <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
+        <button class="btn btn-primary btn-xs" title="Modifier l'état" onclick="openRealForm('${a.id}','${r.id}')">📅 Modifier état</button>
+        <button class="btn btn-secondary btn-xs" title="Historique" onclick="openHistorique('${a.id}')">📜</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -2545,8 +2545,8 @@ async function renderActionsEcheances() {
       <td style="font-weight:500">${fmtDate(r.date_prevue)}</td>
       <td><span class="badge ${urgCls}">dans ${jours}j</span></td>
       <td><div style="display:flex;gap:5px;">
-        <button class="btn btn-primary btn-xs" onclick="openRealForm('${a.id}','${r.id}')">✅ Réaliser</button>
-        <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
+        <button class="btn btn-primary btn-xs" title="Marquer réalisée" onclick="openRealForm('${a.id}','${r.id}')">✅ Réaliser</button>
+        <button class="btn btn-secondary btn-xs" title="Historique" onclick="openHistorique('${a.id}')">📜</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -2635,6 +2635,8 @@ async function renderToutesActions() {
     const next = getNextReal(reals, a.id) || getOverdueReal(reals, a.id);
     const etat = next ? (next.date_prevue < today ? 'En retard' : 'Planifié') : 'À planifier';
     const eCls = etat==='En retard'?'b-grave':etat==='Planifié'?'b-encours':'b-mineur';
+    const canEdit = currentRole === 'pilote' || currentRole === 'direction';
+    const canDel = currentRole === 'direction';
     return `<tr style="${!a.actif?'opacity:0.5;':''}">
       <td><span title="${a.commentaires||''}">${a.action}${!a.actif?' <span style="font-size:11px;color:var(--gris)">(archivée)</span>':''}</span></td>
       <td style="font-size:12px">${a.theme}</td>
@@ -2644,10 +2646,11 @@ async function renderToutesActions() {
       <td style="font-size:12px">${a.site||'—'}</td>
       <td style="font-size:12px">${next ? fmtDate(next.date_prevue) : '—'}</td>
       <td><span class="badge ${eCls}">${etat}</span></td>
-      <td><div style="display:flex;gap:5px;">
-        ${canEdit?`<button class="btn btn-primary btn-xs" onclick="openActionForm('${a.id}')">✏️</button>`:''}
-        <button class="btn btn-secondary btn-xs" onclick="openHistorique('${a.id}')">📜</button>
-        ${currentRole==='direction'?`<button class="btn btn-danger btn-xs" onclick="toggleArchiveAction('${a.id}',${a.actif})">${a.actif?'📦':'♻️'}</button>`:''}
+      <td><div style="display:flex;gap:5px;flex-wrap:nowrap;">
+        ${canEdit ? `<button class="btn btn-primary btn-xs" title="Modifier l'action" onclick="openActionForm('${a.id}')">✏️</button>` : ''}
+        ${next && canEdit ? `<button class="btn btn-secondary btn-xs" title="Modifier l'état" onclick="openRealForm('${a.id}','${next.id}')">📅</button>` : ''}
+        <button class="btn btn-secondary btn-xs" title="Historique" onclick="openHistorique('${a.id}')">📜</button>
+        ${canDel ? `<button class="btn btn-secondary btn-xs" title="${a.actif?'Archiver':'Réactiver'}" onclick="toggleArchiveAction('${a.id}',${a.actif})">${a.actif?'📦':'♻️'}</button>` : ''}
       </div></td>
     </tr>`;
   }).join('');
